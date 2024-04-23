@@ -8,7 +8,7 @@ export default function Navbar() {
         <nav className="navbar navbar-expand-lg navbar-light">
 
             <div className="container" > 
-                <Link to="/" className="navbar-brand" style={{fontSize: '22px', fontWeight: 500, color: '#11009E', fontFamily: "Poppins" }} >exotic corner<span style={{color: '#D80032', fontSize: '28px'}}>.</span></Link>
+                <Link to="/" className="navbar-brand" style={{fontSize: '22px', fontWeight: 500, color: '#6420AA', fontFamily: "Poppins" }} >exotic<span style={{color: '#D80032', fontSize: '28px'}}>.</span>corner</Link>
 
                 {/* <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span className="navbar-toggler-icon"></span>

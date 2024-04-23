@@ -42,6 +42,9 @@ const s3 = new S3Client({
 const razorpayKey = process.env.RZP_KEY;
 const razorpaySecret = process.env.RZP_SECRET;
 
+// const razorpayKey = 'rzp_live_WJvHoE0hLYu093';
+// const razorpaySecret = 'U1dHupPIn8NVUU8rsSttX5fU';
+
 const storage = multer.memoryStorage();
 const upload = multer({
   storage: storage,
