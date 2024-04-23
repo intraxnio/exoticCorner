@@ -58,7 +58,7 @@ export default function ProfileSettings() {
 
 const fetchProfile = useCallback(async () => {
   try {
-    axios.post(baseUrl + "/brand/settings-brand-details", {
+    axios.post("/api/brand/settings-brand-details", {
       userId: user.brand_id,
     }).then( ress => {
       setBrandName(ress.data.brandDetails.brand_name);
@@ -109,7 +109,7 @@ useEffect(() => {
     formData.append('image', selectedFile);
   
     try {
-        const response = await axios.post(baseUrl + "/brand/update-brand-logo", formData, {
+        const response = await axios.post("/api/brand/update-brand-logo", formData, {
         withCredentials: true,
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -141,7 +141,7 @@ useEffect(() => {
 
 
 const updateBrandName = () => {
-      axios.post(baseUrl + "/brand/update-brand-name", {
+      axios.post("/api/brand/update-brand-name", {
         brand_id: user.brand_id,
         newBrandName: newName,
       })
@@ -173,7 +173,7 @@ const updateBrandName = () => {
       else {
 
 
-      await axios.post(baseUrl + "/brand/change-password",
+      await axios.post("/api/brand/change-password",
         { userId: user.brand_id, password : originalPassword, newPassword : newPassword },
         {withCredentials: true}
       )

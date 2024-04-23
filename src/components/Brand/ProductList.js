@@ -55,7 +55,7 @@ function ProductList() {
   const getBrandProducts = (async () => {
 
     try {
-      axios.get(baseUrl + "/brand/get-brand-products").then(catResult => {
+      axios.get("/api/brand/get-brand-products").then(catResult => {
   
         setProducts(catResult.data.data);
   

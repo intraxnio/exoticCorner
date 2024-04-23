@@ -45,7 +45,7 @@ function BrandSignup() {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const baseUrl = "http://localhost:8000/api";
+  // const baseUrl = "http://localhost:8000/api";
   
 
 
@@ -91,7 +91,7 @@ function BrandSignup() {
       setIsLoading(true);
 
       try {
-          const response = await axios.post(baseUrl +"/brand/signup-brand", {
+          const response = await axios.post("/api/brand/signup-brand", {
           email: email,
           password: password,
           brand: brand,
@@ -139,7 +139,7 @@ function BrandSignup() {
       else {
 
 
-      await axios.post(baseUrl + "/brand/check-resetPin-withDb-brandTemps",
+      await axios.post("/api/brand/check-resetPin-withDb-brandTemps",
         { email: email.toLowerCase(), pin : emailCode },
         {withCredentials: true}
       )

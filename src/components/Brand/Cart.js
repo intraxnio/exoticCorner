@@ -23,7 +23,7 @@ export default function CartPage() {
   const navigate = useNavigate();
   const cart = useSelector((state) => state.cart);
   const [userDetails, setUserDetails] = useState({});
-  const baseUrl = "http://localhost:8000/api";
+  // const baseUrl = "http://localhost:8000/api";
   const [errorMessage, setErrorMessage] = useState("");
   const [payeeMobile, setPayeeMobile] = useState("");
   const [totalAmount, setTotalAmount] = useState(0);
@@ -39,7 +39,7 @@ export default function CartPage() {
   const getBrandAddress = (async () => {
 
     try {
-      axios.post(baseUrl + "/brand/get-brand-details", {brand_id : user.brand_id}).then(catResult => {
+      axios.post("/api/brand/get-brand-details", {brand_id : user.brand_id}).then(catResult => {
   
         setUserDetails(catResult.data.data);
   
@@ -96,7 +96,7 @@ if(!mobileRegex.test(payeeMobile)){
 
        await getTotalValue();
 
-        await axios.post(baseUrl + "/brand/create-new-invoice",
+        await axios.post("/api/brand/create-new-invoice",
         { brand_id : user.brand_id, payeeName : userDetails.brand_name, payeeMobile : payeeMobile, totalAmount : totalAmount, selectedProducts : cart })
       .then((res) => {
 
