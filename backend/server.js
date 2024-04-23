@@ -19,33 +19,35 @@ process.on("uncaughtException", (err) => {
   console.log(`shutting down the server for handling uncaught exception`);
 });
 
+
+
 const corsOptions = {
-  origin: 'https://localhost:4900',
+  origin: '*',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
   optionSuccessStatus: 200,
+  changeOrigin: true,
 };
 
 app.use(cors(corsOptions));
 
-
-// app.use((req, res, next) => {
-//   res.header('Access-Control-Allow-Origin', '*');
-//   res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
-//   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-//   res.header('Access-Control-Allow-Credentials', 'true');
-//   next();
-// });
-
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  next();
+});
 
 
 
-app.use("/api/brand", brand);
+
+app.use("/brand", brand);
 
 
 //create server
-const server = app.listen(8000, () => {
-  console.log('Server is running on http://localhost:8000');
+const server = app.listen(8009, () => {
+  console.log('Server is running on http://localhost:8009');
 });
 
 //unhandled promise rejection

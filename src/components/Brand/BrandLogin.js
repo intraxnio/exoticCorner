@@ -27,7 +27,7 @@ function BrandLogin() {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const baseUrl = "http://localhost:8000/api";
+  // const baseUrl = "http://localhost:8000/api";
 
 
 
@@ -42,15 +42,14 @@ function BrandLogin() {
       if(user.brand_id && token)
       {
 
-        await axios.post(
-          baseUrl + "/brand/check-user-token",
+        await axios.post("/api/brand/check-user-token",
           { brand_id: user.brand_id, token : token },
         ).then((tokenResponse) =>{
           
           if(tokenResponse.data.tokenMatches){
 
             setIsLoading(false);
-            navigate("/brand/dashboard");
+            navigate("/brand/products");
 
           }
 
@@ -112,7 +111,7 @@ function BrandLogin() {
     else{
       setIsLoading(true);
       
-      await axios.post(baseUrl + "/brand/brand-login",
+      await axios.post("/api/brand/brand-login",
         { email: email.toLowerCase(), password: password },
         {withCredentials: true}
       )
@@ -125,7 +124,7 @@ function BrandLogin() {
 
            dispatch(login(userDetails));
            setIsLoading(false);
-          navigate("/brand/dashboard");
+          navigate("/brand/products");
 
       })
       .catch((err) => {
