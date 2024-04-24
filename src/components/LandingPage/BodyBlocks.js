@@ -100,7 +100,7 @@ function BodyBlocks() {
 </div>
 
 
-    <div className="container mt-3">
+    <div className="container mt-3 mb-4">
 
         <div className="row mx-auto">
           <div className="col-12 col-md-6 col-lg-6 order-2 order-md-0 order-lg-0 my-auto">

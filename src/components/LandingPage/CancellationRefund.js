@@ -16,13 +16,13 @@ function cancellationPolicy() {
 
         <p>
 
-Last updated on March 10th 2024 <br />
+Last updated on March 20th 2024 <br />
 
-Billsbook believes in helping its customers as far as possible, and has therefore a liberal cancellation policy. Under this policy:
+ExoticCorner believes in helping its customers as far as possible, and has therefore a liberal cancellation policy. Under this policy:
 
 Cancellations will be considered only if the request is made immediately after placing the order. However, the cancellation request may not be entertained if the orders have been communicated to the vendors/merchants and they have initiated the process of shipping them.
 
-Billsbook does not accept cancellation requests for perishable items like flowers, eatables etc. However, refund/replacement can be made if the customer establishes that the quality of product delivered is not good.
+ExoticCorner does not accept cancellation requests for perishable items like flowers, eatables etc. However, refund/replacement can be made if the customer establishes that the quality of product delivered is not good.
 
 </p>
 <p>
@@ -33,7 +33,7 @@ In case you feel that the product received is not as shown on the site or as per
 
 In case of complaints regarding products that come with a warranty from manufacturers, please refer the issue to them.
 
-In case of any Refunds approved by the Billsbook, it’ll take 3-5 days for the refund to be processed to the end customer.
+In case of any Refunds approved by the ExoticCorner, it’ll take 3-5 days for the refund to be processed to the end customer.
         </p>
     </div>
     <Footer />

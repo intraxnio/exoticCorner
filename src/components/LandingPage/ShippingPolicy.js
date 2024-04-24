@@ -16,12 +16,12 @@ function shippingPolicy() {
 
         <p>
 
-Last updated on Mar 10th 2024.
+Last updated on Mar 20th 2024.
 </p>
 <p>
 
 
-Shipping is not applicable for this business.
+We deliver every shipment with in 3 days across Hyderabad city, Telanagana.
         </p>
     </div>
     <Footer />

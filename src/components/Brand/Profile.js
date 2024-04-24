@@ -39,7 +39,7 @@ export default function ProfileSettings() {
   const [originalPassword, setOriginalPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [passwordDialogue, setPasswordDialogue] = useState(false);
-  const baseUrl = "http://localhost:8000/api";
+  // const baseUrl = "http://localhost:8000/api";
 
 
 
@@ -69,6 +69,7 @@ const fetchProfile = useCallback(async () => {
       setBankAccount(ress.data.brandDetails.bank_account);
       setIfscCode(ress.data.brandDetails.ifsc);
       setKycStatus(ress.data.brandDetails.is_approved);
+
       setLoading(false);
     }).catch(e => {
       // Handle error
@@ -234,7 +235,7 @@ const updateBrandName = () => {
         (<Avatar alt="Profile Avatar"  style={{height: '80px', width: '80px'}}>Brand</Avatar>)}
         
         <div style={{ marginLeft: '20px' }}>
-          <Typography variant="h6">Upload brand logo</Typography>
+          <Typography variant="h6">Brand logo</Typography>
         </div>
                 
 
@@ -280,9 +281,10 @@ const updateBrandName = () => {
         </div>
                 <hr style={{ color: 'grey', border: 'none', height: '0.6px', backgroundColor: 'grey' }} />
 
-                  {/* 3rd Line: Kyc */}
 
-                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+  {/* 3rd Line: Kyc */}
+
+  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
                 <div style={{ flex: '1' }}>
                     <Typography variant="body2" style={{ fontWeight: 'bold', marginBottom: '12px' }}>
                     KYC Status
@@ -294,6 +296,7 @@ const updateBrandName = () => {
               
         </div>
                 <hr style={{ color: 'grey', border: 'none', height: '0.6px', backgroundColor: 'grey' }} />
+
 
       {/* 3rd Line: Gst */}
 
@@ -423,6 +426,7 @@ const updateBrandName = () => {
 {/* {category dialogue ends} */}
     </Grid>
     </Grid>
+
     </div>
 
     {isLoading && (
