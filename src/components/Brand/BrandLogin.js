@@ -337,7 +337,7 @@ function BrandLogin() {
 
               <Typography variant="body2" sx={{marginTop : '5px'}}>
                 I agree to{" "}
-                <Link href="https://exoticcorner/terms-conditions" target="_blank" underline="none" sx={{color: '#362FD9'}}>
+                <Link href="https://exoticcorner.in/terms-conditions" target="_blank" underline="none" sx={{color: '#362FD9'}}>
                   Exoticcorner's Terms of Service
                 </Link>
               </Typography>
