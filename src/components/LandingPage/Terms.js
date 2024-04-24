@@ -22,7 +22,7 @@ or module of the website.
 
 Welcome to our website. If you continue to browse and use this website you are agreeing to comply with and be bound by the following terms and conditions of use, which together with our privacy policy govern ExoticCorner`s relationship with you in relation to this website.
 
-The term `ExoticCorner` or `us` or `we` refers to the owner of the website whose registered/operational office is Plot no - 20, 2nd Floor, Beside Lucid Diagnostics, Kukatpally, Hyderabad TELANGANA 500072. The term `you` refers to the user or viewer of our website.
+The term `ExoticCorner` or `us` or `we` refers to the owner of the website whose registered/operational office is Flat No 102, House No: 7-1-681/MIG, Sai Orchids Apt, Serilingampally, Rangareddy, Hyderabad, Telangana - 500019. The term `you` refers to the user or viewer of our website.
 
         </p>
     </div>
