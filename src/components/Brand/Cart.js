@@ -10,6 +10,8 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { clearCart } from "../../store/cartSlice";
 import { useDispatch } from "react-redux";
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+
 
 
 
@@ -140,9 +142,18 @@ if(!mobileRegex.test(payeeMobile)){
     <Grid container justifyContent="center" sx={{ marginTop: 5 }}>
       <Grid item xs={12} sm={12} md={10}>
         {cart.length ==0 ? (
-          <Typography>
-            Cart is empty
-          </Typography>
+           <div
+           style={{
+             display: "flex",
+             flexDirection: "column",
+             alignItems: "center",
+             justifyContent: "center",
+             height: "50vh", // Adjust the height as needed
+           }}
+         >
+           <ShoppingCartOutlinedIcon style={{ fontSize: '60px', marginBottom: '20px', color: '#5D12D2'}}/>
+           <div> Cart is empty</div>
+         </div>
         ) : (
           <>
                 <Box border="1px solid #ccc" borderRadius={1} width={680} marginBottom={2}>

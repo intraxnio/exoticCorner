@@ -20,10 +20,32 @@ const cartSlice = createSlice({
 
       localStorage.setItem("exoticCart", JSON.stringify(state));
     },
+   
     removeFromCart: (state, action) => {
       const productId = action.payload.productId;
-      return state.filter(item => item.product_id !== productId);
+      const updatedState = state.map(item => {
+        if (item.product_id === productId) {
+          if (item.quantity > 1) {
+            // If the quantity of the item is greater than 0, decrement the quantity
+            return {
+              ...item,
+              quantity: item.quantity - 1
+            };
+          } else {
+            // If the quantity is 0, remove the item from the cart
+            // return state.filter(item => item.product_id !== productId);
+            return null;
+          }
+        } else {
+          return item;
+        }
+      }).filter(Boolean); // Filter out null items
+      
+      localStorage.setItem("exoticCart", JSON.stringify(updatedState));
+      
+      return updatedState;
     },
+    
     updateCartItemQuantity: (state, action) => {
       const { productId, quantity } = action.payload;
       const itemToUpdate = state.find(item => item.product_id === productId);

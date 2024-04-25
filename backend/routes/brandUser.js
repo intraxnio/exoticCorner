@@ -529,8 +529,8 @@ router.post('/update-brand-logo', upload.single('image'), async function (req, r
 
   const uploadFileAndUpdateBrandLogo = (file, index) => {
     const params = {
-      Bucket: 'billsbookbucket', 
-      Key: `brandLogos/${Date.now()}_${file.originalname}`, 
+      Bucket: 'exoticcornerbucket', 
+      Key: `productImages/${Date.now()}_${file.originalname}`, 
       Body: file.buffer,
       ContentType: file.mimetype,
       ServerSideEncryption: 'AES256',
@@ -763,7 +763,7 @@ router.post("/create-new-invoice", async function (req, res) {
 
 });
 
-router.post('/all-invoices', verifyToken, async (req, res) => {
+router.post('/all-invoices', async (req, res) => {
 
   const user_id = req.body.brand_id;
   let { page, pageSize } = req.body;
@@ -1207,7 +1207,7 @@ router.post('/is-pdf-link-available', async (req, res) => {
     const pdfBuffer = await page.pdf({ format: 'A4' });
 
     const params = {
-      Bucket: "billsbookbucket",
+      Bucket: "exoticcornerbucket",
       Key: `invoices/${Date.now()}_${result.invoice_number}`,
       Body: pdfBuffer,
       ContentType: 'application/pdf',
@@ -1279,7 +1279,7 @@ invoiceQueue.process(async (job) => {
 try {
 
     const params = {
-        Bucket: "billsbookbucket",
+        Bucket: "exoticcornerbucket",
         Key: `invoices/${Date.now()}_${invoice.invoice_number}`,
         Body: pdfBuffer,
         ContentType: 'application/pdf',

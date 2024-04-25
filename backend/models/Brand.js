@@ -42,15 +42,13 @@ const Brand_Schema = new Schema({
         type: String,
     },
 
-    bank_account: {
-        type: String,
-    },
-
-    ifsc: {
-        type: String,
-    },
     
     is_approved: {
+        type: Boolean,
+        default: false
+    },
+
+    route_enabled: {
         type: Boolean,
         default: false
     },

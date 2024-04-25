@@ -112,7 +112,7 @@ export default function LinksCard() {
 
       setIsLoading(true);
 
-      axios.post(baseUrl + "/brand/is-pdf-link-available", {
+      axios.post("/api/brand/is-pdf-link-available", {
           invoiceId: invoiceId,
         })
         .then((ress) => {
@@ -141,13 +141,14 @@ const fetchDataFromServer = async (paginationModel) => {
 
 
     const token = Cookies.get('exoticToken');
-    const response = await axios.post(baseUrl + "/brand/all-invoices", 
+    const response = await axios.post("/api/brand/all-invoices", 
     { brand_id: user.brand_id, page: paginationModel.page, pageSize: paginationModel.pageSize },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+    // {
+    //   headers: {
+    //     Authorization: `Bearer ${token}`
+    //   }
+    // }
+  );
     const { data, totalRowCount } = response.data;
     setRowCountState(totalRowCount || 0);
     setHasMore(data.length > 0);
@@ -168,7 +169,7 @@ const fetchDataFromServerForSmallScreen = async (page, pageSize) => {
   try {
 
     const token = Cookies.get('billsBookToken'); // Retrieve the token from cookies
-    const response = await axios.post(baseUrl + "/brand/all-invoices", { userId: user.brand_id, page:page, pageSize:pageSize },
+    const response = await axios.post("/api/brand/all-invoices", { userId: user.brand_id, page:page, pageSize:pageSize },
     {
       headers: {
         Authorization: `Bearer ${token}`
@@ -261,63 +262,6 @@ const loadMoreData = async () => {
   }, [paginationModel]);
 
 
-
-  const createCampaign = async (e) => {
-    e.preventDefault();
-
-    try {
-
-        setLoading(true);
-
-          axios.post(baseUrl + "/brand/check-kyc-status", {
-          userId: user.brand_id,
-        }).then((ress) => {
-
-          if(ress.data.approved){
-
-            axios.post(baseUrl + "/brand/get-brand-products", {
-              userId: user.brand_id,
-            }).then((ress) => {
-    
-              if(ress.data.data.length !== 0){
-    
-          setLoading(false);
-          navigate("/brand/createInvoice");
-    
-              }
-    
-              else{
-                setLoading(false);
-                handleClickOpenProd();
-                
-              }
-            })
-            .catch((error) => {
-              toast.error("Server Error. Please try again later.");
-            });
-
-          }
-
-          else{
-            setLoading(false);
-            handleClickOpen();
-            
-          }
-        })
-        .catch((e) => {
-          toast.error("Server Error. Please try again later.");
-         
-        });
-  
-  
-      } catch (error) {
-        toast.error("Server Error. Please try again later.");
-       
-      }
-
-
-
-  };
 
   
 

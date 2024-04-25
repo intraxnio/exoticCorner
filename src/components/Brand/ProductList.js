@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../../store/cartSlice";
+import { removeFromCart } from "../../store/cartSlice";
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { deepOrange, green, purple, blue } from '@mui/material/colors';
@@ -37,7 +38,6 @@ const theme = createTheme({
 function ProductList() {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
-  const baseUrl = "http://localhost:8000/api";
   const user = useSelector((state) => state.brandUser);
   const dispatch = useDispatch();
   const [addedToCart, setAddedToCart] = useState({});
@@ -85,6 +85,29 @@ function ProductList() {
     toast.success('Added to cart');
   };
 
+  const handleRemoveFromCart = (productId) => {
+    const productIndex = cart.findIndex(item => item.product_id === productId);
+    if (productIndex !== -1) {
+      const updatedCart = [...cart];
+      updatedCart[productIndex] = {
+        ...updatedCart[productIndex],
+        quantity: updatedCart[productIndex].quantity - 1
+      };
+      if (updatedCart[productIndex].quantity <= 0) {
+        updatedCart.splice(productIndex, 1); // Remove the product if quantity is 0 or less
+      }
+      dispatch(removeFromCart({ productId }));
+      setAddedToCart(updatedCart.reduce((acc, item) => {
+        acc[productId] = true;
+        return acc;
+      }, {}));
+      toast.success('Removed from cart');
+    }
+  };
+  
+  
+  
+
   const calculateTotalCartValue = () => {
     let totalValue = 0;
     cart.forEach(item => {
@@ -128,26 +151,25 @@ function ProductList() {
       <Box style={{ height: 'calc(100vh - 200px)', overflowY: 'auto' }}>
 <Grid container spacing={2}>
 {products.map((fruitsData, index) => (
-  <Grid item key={index} xs={12} sm={6} md={4} lg={3} marginTop={1}>
+  <Grid item key={index} xs={6} sm={6} md={3} lg={2} marginTop={1}>
     <Box
-      width={250}
-      height={400}
+      width="100%"
+      height="100%"
       border="1px solid #ccc"
       borderRadius={1}
       textAlign="center"
     >
-      <img
-        src={fruitsData.product_image}
-        alt={fruitsData.product_name}
-        style={{ maxWidth: '100%', maxHeight: '100%', marginBottom: '8px' }}
-      />
-      <Stack sx={{ display : 'flex', flexDirection : 'row', marginLeft : '12px' }}>
-      <Typography sx={{fontSize : '18px', paddingRight : '6px'}}>{fruitsData.product_name}</Typography>
-      <Typography sx={{fontSize : '18px'}}> - {fruitsData.min_order}{fruitsData.units}</Typography>
-      </Stack>
+    <img
+      src={fruitsData.product_image}
+      alt={fruitsData.product_name}
+      style={{ maxWidth: '100%', maxHeight: '100%' }}
+    />
 
-      <Typography sx={{fontSize : '18px', display : 'flex', justifyContent : 'flex-start', marginTop : '6px', marginLeft : '12px'}}>Rs. {fruitsData.price}</Typography>
-
+    <Stack sx={{ display : 'flex', flexDirection : 'row', justifyContent: 'space-between', alignItems: 'center', margin: '0 6px' }}>
+      <Typography sx={{ fontSize: '16px' }}>{fruitsData.product_name}</Typography>
+      <Typography sx={{ fontSize: '16px' }}>{fruitsData.min_order}{fruitsData.units}</Typography>
+    </Stack>
+    <Typography sx={{ fontSize: '18px', marginTop: '6px' }}>Rs. {fruitsData.price}</Typography>
 
 {cart.find(item => item.product_id === fruitsData._id) ? (
               <Stack sx={{display : 'flex', flexDirection : 'row', alignItems : 'center'}}>
@@ -165,7 +187,7 @@ function ProductList() {
                   textTransform: 'none',
                   color : 'orange'
                  }} 
-                onClick={() => handleAddToCart(fruitsData)}>
+                onClick={() => handleRemoveFromCart(fruitsData._id)}>
                   -
                 </Box>
                 <div style={{ marginTop: '8px', marginRight : '12px', fontWeight : '500'}}variant="outlined">{cart[index].quantity}</div>
@@ -186,7 +208,7 @@ function ProductList() {
                 </Box>
               </Stack>
             ) : (
-              <Button variant="outlined" color="primary" size="medium" style={{ marginTop: '16px' }} onClick={() => handleAddToCart(fruitsData)}>Add to Cart</Button>
+              <Button variant="outlined" color="primary" size="medium" style={{ marginTop: '16px', marginBottom : '16px' }} onClick={() => handleAddToCart(fruitsData)}>Add to Cart</Button>
             )}
     </Box>
   </Grid>

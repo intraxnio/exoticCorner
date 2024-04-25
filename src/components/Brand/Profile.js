@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Button, Avatar, Typography, Grid, TextField, Dialog, Select, MenuItem, DialogContent, DialogActions, DialogTitle} from '@mui/material';
+import { Button, Avatar, Typography, Grid, TextField, Dialog, DialogContent, DialogActions, DialogTitle} from '@mui/material';
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -39,7 +39,7 @@ export default function ProfileSettings() {
   const [originalPassword, setOriginalPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [passwordDialogue, setPasswordDialogue] = useState(false);
-  // const baseUrl = "http://localhost:8000/api";
+  const baseUrl = "http://localhost:8000/api";
 
 
 
@@ -49,7 +49,7 @@ export default function ProfileSettings() {
 
   const handleSignOut = () => {
     dispatch(logout());
-    navigate(`/`);
+    navigate(`/login/brand`);
    
   };
 
@@ -64,12 +64,11 @@ const fetchProfile = useCallback(async () => {
       setBrandName(ress.data.brandDetails.brand_name);
       setEmail(ress.data.brandDetails.email);
       setLogo(ress.data.brandDetails.brand_logo);
-      setAddress(ress.data.brandDetails.address);
+      setAddress(ress.data.brandDetails.outlet_address);
       setGstin(ress.data.brandDetails.gstin);
       setBankAccount(ress.data.brandDetails.bank_account);
       setIfscCode(ress.data.brandDetails.ifsc);
       setKycStatus(ress.data.brandDetails.is_approved);
-
       setLoading(false);
     }).catch(e => {
       // Handle error
@@ -84,7 +83,7 @@ useEffect(() => {
 
   if(!user.brand_id){
 
-    navigate("/");
+    navigate("/login/brand");
 
   }
   else if(user.brand_id){
@@ -229,28 +228,7 @@ const updateBrandName = () => {
     <Grid container spacing={2}>
     <Grid item xs={12} sm={6} md={8}>
     <div>
-      {/* 1st Line: Profile Photo */}
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-        {logo !== "" || logo !== null ? (<Avatar src={logo} alt="Profile Avatar"  style={{height: '80px', width: '80px'}}/>):
-        (<Avatar alt="Profile Avatar"  style={{height: '80px', width: '80px'}}>Brand</Avatar>)}
-        
-        <div style={{ marginLeft: '20px' }}>
-          <Typography variant="h6">Brand logo</Typography>
-        </div>
-                
-
-            <Button variant="contained" color="secondary" style={{ marginLeft: 'auto' }} onClick={openFileExplorer}>
-                        Upload
-                        </Button>
-                        {/* Hidden file input element */}
-                        <input
-                        type="file"
-                        ref={fileInputRef}
-                        style={{ display: 'none' }}
-                        onChange={updateLogo}
-                        />
-
-                </div>
+     
 
       {/* 2nd Line: Name */}
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
@@ -281,10 +259,9 @@ const updateBrandName = () => {
         </div>
                 <hr style={{ color: 'grey', border: 'none', height: '0.6px', backgroundColor: 'grey' }} />
 
+                  {/* 3rd Line: Kyc */}
 
-  {/* 3rd Line: Kyc */}
-
-  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
                 <div style={{ flex: '1' }}>
                     <Typography variant="body2" style={{ fontWeight: 'bold', marginBottom: '12px' }}>
                     KYC Status
@@ -296,7 +273,6 @@ const updateBrandName = () => {
               
         </div>
                 <hr style={{ color: 'grey', border: 'none', height: '0.6px', backgroundColor: 'grey' }} />
-
 
       {/* 3rd Line: Gst */}
 
@@ -330,35 +306,6 @@ const updateBrandName = () => {
         </div>
                 <hr style={{ color: 'grey', border: 'none', height: '0.6px', backgroundColor: 'grey' }} />
 
-                 {/* 3rd Line: Bank */}
-
-                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-                <div style={{ flex: '1' }}>
-                    <Typography variant="body2" style={{ fontWeight: 'bold', marginBottom: '12px' }}>
-                    Bank Account
-                    </Typography>
-                    <Typography variant="body1">
-                    {bankAccount}
-                    </Typography>
-                </div>
-              
-        </div>
-                <hr style={{ color: 'grey', border: 'none', height: '0.6px', backgroundColor: 'grey' }} />
-
-                  {/* 3rd Line: ifsc */}
-
-                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-                <div style={{ flex: '1' }}>
-                    <Typography variant="body2" style={{ fontWeight: 'bold', marginBottom: '12px' }}>
-                    IFSC
-                    </Typography>
-                    <Typography variant="body1">
-                    {ifscCode}
-                    </Typography>
-                </div>
-              
-        </div>
-                <hr style={{ color: 'grey', border: 'none', height: '0.6px', backgroundColor: 'grey' }} />
 
               
       {/* 6th Line: Password */}
@@ -426,7 +373,6 @@ const updateBrandName = () => {
 {/* {category dialogue ends} */}
     </Grid>
     </Grid>
-
     </div>
 
     {isLoading && (
