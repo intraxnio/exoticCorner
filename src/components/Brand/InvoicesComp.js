@@ -168,7 +168,7 @@ const fetchDataFromServer = async (paginationModel) => {
 const fetchDataFromServerForSmallScreen = async (page, pageSize) => {
   try {
 
-    const token = Cookies.get('billsBookToken'); // Retrieve the token from cookies
+    const token = Cookies.get('exoticToken'); // Retrieve the token from cookies
     const response = await axios.post("/api/brand/all-invoices", { userId: user.brand_id, page:page, pageSize:pageSize },
     {
       headers: {
@@ -506,7 +506,7 @@ const loadMoreData = async () => {
     }}
   >
     <ReceiptIcon style={{ fontSize: '60px', marginBottom: '20px', color: '#5D12D2'}}/>
-    <div> Create your first Invoice</div>
+    <div> Make your first order</div>
   </div>
       )}
       </>)}
@@ -556,7 +556,7 @@ height: "50vh", // Adjust the height as needed
 }}
 >
 <ReceiptIcon style={{ fontSize: '60px', marginBottom: '20px', color: '#5D12D2'}}/>
-<div> Create your first Invoice</div>
+<div> Make your first order</div>
 </div>)
 }
 </>

@@ -105,7 +105,9 @@ function ProductList() {
     }
   };
   
-  
+  const goToCartScreen = ()=> {
+    navigate('/brand/cart');
+  }
   
 
   const calculateTotalCartValue = () => {
@@ -135,7 +137,7 @@ function ProductList() {
       startIcon = { < ShoppingCartOutlinedIcon />}
       variant="outlined"
       color="primary"
-      onClick={''}
+      onClick={()=>{ goToCartScreen()}}
       sx={{ color: deepOrange[500], marginBottom : '12px'}}
       style={{
         cursor: 'pointer',
@@ -218,7 +220,7 @@ function ProductList() {
 </Box>
 
 
-<ToastContainer autoClose= {2000}/>
+<ToastContainer autoClose= {1000}/>
 
 
 </ThemeProvider>
