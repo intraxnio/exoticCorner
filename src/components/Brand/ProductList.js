@@ -174,7 +174,8 @@ function ProductList() {
     <Typography sx={{ fontSize: '18px', marginTop: '6px' }}>Rs. {fruitsData.price}</Typography>
 
 {cart.find(item => item.product_id === fruitsData._id) ? (
-              <Stack sx={{display : 'flex', flexDirection : 'row', alignItems : 'center'}}>
+
+              <Stack sx={{display : 'flex', flexDirection : 'row', alignItems : 'center', marginBottom : '16px'}}>
                 <Box 
                 border="1px solid orange"
                 borderRadius={1} 
