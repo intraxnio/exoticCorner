@@ -190,7 +190,7 @@ function ProductList() {
                 onClick={() => handleRemoveFromCart(fruitsData._id)}>
                   -
                 </Box>
-                <div style={{ marginTop: '8px', marginRight : '12px', fontWeight : '500'}}variant="outlined">{cart[index].quantity}</div>
+                <div style={{ marginTop: '8px', marginRight : '12px', fontWeight : '500'}}variant="outlined">{cart.find(item => item.product_id === fruitsData._id).quantity}</div>
                 
                 <Box 
                 border="1px solid orange"
