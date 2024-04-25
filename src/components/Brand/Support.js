@@ -48,19 +48,19 @@ export default function SupportPage() {
               </ListItem>
               <ListItem>
                 <CheckIcon color="primary" />
-                &nbsp;&nbsp; Account Setup
+                &nbsp;&nbsp; Outlet Setup
               </ListItem>
               <ListItem>
                 <CheckIcon color="primary" />
-                &nbsp;&nbsp; Catalogue Setup
+                &nbsp;&nbsp; Payment Reconciliation
               </ListItem>
               <ListItem>
                 <CheckIcon color="primary" />
-                &nbsp;&nbsp; Bugs Resolution
+                &nbsp;&nbsp; Delivery Tracking
               </ListItem>
               <ListItem>
                 <CheckIcon color="primary" />
-                &nbsp;&nbsp; On-demand Reports (PDF)
+                &nbsp;&nbsp; On-demand Invoices (PDF)
               </ListItem>
              
             </List>
@@ -77,7 +77,7 @@ export default function SupportPage() {
               startIcon={<MailOutlineIcon />}
               style={{marginLeft: '16px', textTransform: 'lowercase'}}
             >
-              support@billsbook.online
+              support@exoticcorner.in
             </Button>
           </CardActions>
         </Card>
@@ -104,15 +104,15 @@ export default function SupportPage() {
               </ListItem>
               <ListItem>
                 <CheckIcon color="primary" />
-                &nbsp;&nbsp; Account Setup
+                &nbsp;&nbsp; Outlet Setup
               </ListItem>
               <ListItem>
                 <CheckIcon color="primary" />
-                &nbsp;&nbsp; Catalogue Setup
+                &nbsp;&nbsp; Payment Reconciliation
               </ListItem>
               <ListItem>
                 <CheckIcon color="primary" />
-                &nbsp;&nbsp; On-demand Reports (PDF)
+                &nbsp;&nbsp; On-demand Invoices (PDF)
               </ListItem>
              
             </List>
@@ -129,7 +129,7 @@ export default function SupportPage() {
               startIcon={<CallIcon />}
               style={{marginLeft: '16px', textTransform: 'lowercase'}}
             >
-              +91 6305420874
+              +91 9848128740
             </Button>
           </CardActions>
         </Card>

@@ -96,7 +96,7 @@ const verifyToken = (req, res, next) => {
 router.post("/signup-brand", async (req, res, next) => {
 
   try {
-    const { email, password, brand } = req.body;
+    const { email, password, brand, address } = req.body;
     const hashedPassword = bcrypt.hashSync(password, 10);
     const lowerCaseEmail = email.toLowerCase();
     const pin = generatePin();
@@ -113,7 +113,7 @@ router.post("/signup-brand", async (req, res, next) => {
     const existingUserInTemp = await TempBrand.findOne({ email : lowerCaseEmail});
 
    
-    if (!lowerCaseEmail || !password || !brand) {
+    if (!lowerCaseEmail || !password || !brand || !address) {
       return res.status(400).send({
          error: "All fields are mandatory",
          data: null,
@@ -133,6 +133,7 @@ router.post("/signup-brand", async (req, res, next) => {
 
       existingUserInTemp.password = hashedPassword;
       existingUserInTemp.brand_name = brand;
+      existingUserInTemp.outlet_address = address;
       existingUserInTemp.reset_pin = pin;
       existingUserInTemp.save();
       await sendMail(options);
@@ -146,7 +147,8 @@ router.post("/signup-brand", async (req, res, next) => {
       email: lowerCaseEmail,
       password: hashedPassword,
       brand_name: brand,
-      reset_pin : pin
+      reset_pin : pin,
+      outlet_address : address
     });
     await sendMail(options);
 
@@ -303,6 +305,7 @@ router.post("/check-resetPin-withDb-brandTemps", async function (req, res) {
         email: lowerCaseEmail,
         password: result.password,
         brand_name: result.brand_name,
+        outlet_address: result.outlet_address,
         reset_pin : pin,
         balance : 0,
         purchased_plan : '',

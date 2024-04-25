@@ -60,8 +60,7 @@ function App() {
 
 
         <Route path="/brand/*" element={<BrandSideNavBar />}>
-          <Route index element={<BrandMainScreen />} />
-          <Route path="dashboard" element={<BrandMainScreen />} />
+          <Route index element={<ProductList />} />
           <Route path="profileSettings" element={<ProfileSettings/>}/>
           <Route path="invoices" element={<InvoicesComp/>}/>
           <Route path="cart" element={<CartPage/>}/>

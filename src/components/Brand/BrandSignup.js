@@ -35,7 +35,7 @@ function BrandSignup() {
   const [brand, setBrand] = useState('');
   const [handle, setHandle] = useState('');
   const [website, setWebsite] = useState('');
-  const [category, setCategory] = useState('');
+  const [outletAddress, setOutletAddress] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [emailCode, setEmailCode] = useState("");
@@ -78,7 +78,7 @@ function BrandSignup() {
 
     const emailRegex = /^\S+@\S+\.\S+$/;
 
-    if(!email || !password || !brand ){
+    if(!email || !password || !brand || !outletAddress){
       toast.warning("All fields are mandatory");
     }
 
@@ -95,6 +95,7 @@ function BrandSignup() {
           email: email,
           password: password,
           brand: brand,
+          address : outletAddress
         });
     
         if (response.data.success) {
@@ -221,6 +222,7 @@ function BrandSignup() {
         <TextField type='email' id='email' sx={{ marginBottom : '12px'}} onChange={(e)=>{setEmail(e.target.value)}} variant='outlined' label='Email'></TextField>
         <TextField type='password' id="password"  sx={{ marginBottom : '12px'}} onChange={(e)=>{setPassword(e.target.value)}} variant='outlined' label='Create a Password'></TextField>
         <TextField type='text' id="outletName" sx={{ marginBottom : '12px'}} onChange={(e)=>{setBrand(e.target.value)}} variant='outlined' label='Outlet Name'></TextField>
+        <TextField type='text' id="outletAddress" sx={{ marginBottom : '12px'}} onChange={(e)=>{setOutletAddress(e.target.value)}} variant='outlined' label='Outlet Address'></TextField>
 
         <Button type='submit' onClick={submit} variant='contained' 
                 sx={{
@@ -288,6 +290,7 @@ function BrandSignup() {
         <TextField type='email' id='email' sx={{ marginBottom : '12px'}} onChange={(e)=>{setEmail(e.target.value)}} variant='outlined' label='Email'></TextField>
         <TextField type='password' id="password"  sx={{ marginBottom : '12px'}} onChange={(e)=>{setPassword(e.target.value)}} variant='outlined' label='Create a Password'></TextField>
         <TextField type='text' id="outletName" sx={{ marginBottom : '12px'}} onChange={(e)=>{setBrand(e.target.value)}} variant='outlined' label='Outlet Name'></TextField>
+        <TextField type='text' id="outletAddress" sx={{ marginBottom : '12px'}} onChange={(e)=>{setOutletAddress(e.target.value)}} variant='outlined' label='Outlet Address'></TextField>
 
         <Button type='submit' onClick={submit} variant='contained' 
                 sx={{

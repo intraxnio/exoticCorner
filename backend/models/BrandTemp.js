@@ -21,9 +21,10 @@ const BrandTemp_Schema = new Schema({
 
     },
 
-    instagram_handle: {
+    outlet_address: {
         type: String,
     },
+
 
     brand_name: {
         type: String,

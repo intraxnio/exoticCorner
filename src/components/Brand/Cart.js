@@ -114,9 +114,8 @@ if(!mobileRegex.test(payeeMobile)){
                 toast.success("Payment Link Sent");
                 setTimeout(() => {
                 navigate(`/brand/invoices`);
-
                   
-                }, 3000);
+                }, 1000);
 
                   }
 
@@ -195,7 +194,7 @@ if(!mobileRegex.test(payeeMobile)){
             <Stack>
 
             <TextField
-            sx={{ background : '#FFFFFF', borderColor : '#FFFFFF', width : '200px'}}
+            sx={{ background : '#FFFFFF', borderColor : '#FFFFFF', width : '200px', marginLeft: '2px'}}
             type="text"
             id="payeeMobile"
             // onChange={(e) => {
@@ -221,6 +220,7 @@ if(!mobileRegex.test(payeeMobile)){
                           marginTop: "16px",
                           marginBottom : '16px',
                           maxWidth: "200px",
+                          marginLeft: '2px'
                         }}
                         onClick={createInvoice}
                       >

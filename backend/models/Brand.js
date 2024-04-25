@@ -34,10 +34,6 @@ const Brand_Schema = new Schema({
         required: true
     },
 
-    address: {
-        type: String,
-    },
-
     gstin: {
         type: String,
     },
