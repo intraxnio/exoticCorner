@@ -732,6 +732,8 @@ router.post("/create-new-invoice", async function (req, res) {
           shortUrl: paymentResult.short_url,
           payment_link_id: paymentResult.id,
           payment_status: 'created',
+          shop_name: 'ForestKisan Organic Products',
+          shop_address: '7-1-681/MIG, Sai Orchids Apt, Serilingampally, Hyderabad, Telangana - 500019.'
 
 
         });
@@ -1188,7 +1190,8 @@ router.post('/is-pdf-link-available', async (req, res) => {
       payeeMobile: '+91 ' + result.buyer_mobile_number,
       companyName: result.brandUser_id.brand_name,
       companyAddress: result.brandUser_id.address,
-      companyGSTIN: result.brandUser_id.gstin,
+      shopName: result.shop_name,
+      shopAddress: result.shop_address,
       productDetails: result.products_details,
       amountToPay: result.invoice_amount
     });
@@ -1258,6 +1261,8 @@ invoiceQueue.process(async (job) => {
     payeeMobile: '+91 '+ invoice.buyer_mobile_number,
     companyName: invoice.brandUser_id.brand_name,
     companyAddress: invoice.brandUser_id.outlet_address,
+    shopName: invoice.shop_name,
+    shopAddress: invoice.shop_address,
     productDetails: invoice.products_details,
     amountToPay : invoice.invoice_amount
   });
@@ -1323,7 +1328,7 @@ try {
 
 
 
-  async function generateInvoice({ date, invoiceNumber, payeeName, payeeMobile, companyName, companyAddress, companyGSTIN, productDetails, amountToPay }) {
+  async function generateInvoice({ date, invoiceNumber, payeeName, payeeMobile, companyName, companyAddress, shopName, shopAddress, productDetails, amountToPay }) {
 
       console.log('generateInvoice hit');
       return (
@@ -1362,20 +1367,35 @@ try {
             <div class="d-md-flex justify-content-between">
                 <div>
                     <p class="text-primary">Invoice To</p>
-                    <h4>${payeeName}</h4>
+                    <h3>${payeeName}</h3>
                     <ul class="list-unstyled">
                         <li>${payeeMobile}</li>
                     </ul>
                 </div>
+
                 <div class="mt-5 mt-md-0">
                     <p class="text-primary">Invoice From</p>
-                    <h4>${companyName}</h4>
+                    <h3>${shopName}</h3>
                     <ul class="list-unstyled">
-                        <li>${companyAddress}</li>
-                        <li>${companyGSTIN}</li>
+                        <li>${shopAddress}</li>
+                        
                     </ul>
                 </div>
             </div>
+
+            
+            <div class="d-md-flex justify-content-between">
+            
+            <div class="mt-5 mt-md-0">
+                <p class="text-primary">Shipping Address</p>
+                <h3>${companyName}</h3>
+                <ul class="list-unstyled">
+                    <li>${companyAddress}</li>
+                </ul>
+            </div>
+
+            
+        </div>
 
             <table class="table border my-5">
                 <thead>

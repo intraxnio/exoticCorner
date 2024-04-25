@@ -151,7 +151,7 @@ function ProductList() {
 
 
       <Box style={{ height: 'calc(100vh - 200px)', overflowY: 'auto' }}>
-<Grid container spacing={2} sx={{ marginBottom : '22px'}}>
+<Grid container spacing={2} sx={{ marginBottom : '46px'}}>
 {products.map((fruitsData, index) => (
   <Grid item key={index} xs={6} sm={6} md={3} lg={2} marginTop={1}>
     <Box
