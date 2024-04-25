@@ -170,11 +170,12 @@ const fetchDataFromServerForSmallScreen = async (page, pageSize) => {
 
     const token = Cookies.get('exoticToken'); // Retrieve the token from cookies
     const response = await axios.post("/api/brand/all-invoices", { userId: user.brand_id, page:page, pageSize:pageSize },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+    // {
+    //   headers: {
+    //     Authorization: `Bearer ${token}`
+    //   }
+    // }
+  );
     const { data, totalRowCount } = response.data;
     setRowCountState(totalRowCount || 0);
     setHasMore(data.length > 0);
@@ -251,10 +252,10 @@ const loadMoreData = async () => {
 
     }
 
-    else if(user.brand_id && isSmallScreen){
-      fetchDataForSmallScreen();
+    // else if(user.brand_id && isSmallScreen){
+    //   fetchDataForSmallScreen();
     
-    }
+    // }
     else if(user.brand_id){
       fetchData();
 
