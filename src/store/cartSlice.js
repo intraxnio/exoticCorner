@@ -6,18 +6,33 @@ const cartSlice = createSlice({
   name: "cart",
   initialState: storedState || [],
   reducers: {
+    // addToCart: (state, action) => {
+    //   const newItem = action.payload;
+    //   const existingItem = state.find(item => item.product_id === newItem.product_id);
+
+    //   if (existingItem) {
+    //     // If the item already exists in the cart, update its quantity
+    //     existingItem.quantity += newItem.quantity;
+    //   } else {
+    //     // If the item doesn't exist, add it to the cart
+    //     state.push(newItem);
+    //   }
+
+    //   localStorage.setItem("exoticCart", JSON.stringify(state));
+    // },
+
     addToCart: (state, action) => {
       const newItem = action.payload;
-      const existingItem = state.find(item => item.product_id === newItem.product_id);
-
-      if (existingItem) {
+      const existingItemIndex = state.findIndex(item => item.product_id === newItem.product_id);
+    
+      if (existingItemIndex !== -1) {
         // If the item already exists in the cart, update its quantity
-        existingItem.quantity += newItem.quantity;
+        state[existingItemIndex].quantity += newItem.quantity;
       } else {
         // If the item doesn't exist, add it to the cart
         state.push(newItem);
       }
-
+    
       localStorage.setItem("exoticCart", JSON.stringify(state));
     },
    
