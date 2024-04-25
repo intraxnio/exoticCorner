@@ -1189,7 +1189,7 @@ router.post('/is-pdf-link-available', async (req, res) => {
       payeeName: result.buyer_name,
       payeeMobile: '+91 ' + result.buyer_mobile_number,
       companyName: result.brandUser_id.brand_name,
-      companyAddress: result.brandUser_id.address,
+      companyAddress: result.brandUser_id.outlet_address,
       shopName: result.shop_name,
       shopAddress: result.shop_address,
       productDetails: result.products_details,
@@ -1412,10 +1412,10 @@ try {
                 ${productDetails.map((product, index) => `
                 <tr>
                   <td>${index + 1}</td>
-                  <td>${product.product_name}</td>
+                  <td>${product.name}</td>
                   <td>${product.quantity}</td>
-                  <td>Rs. ${product.unit_price}/${product.unit_type}</td>
-                  <td>Rs. ${product.quantity * product.unit_price}</td>
+                  <td>Rs. ${product.price}/${product.units}</td>
+                  <td>Rs. ${product.quantity * product.price}</td>
                 </tr>
               `).join('')}
 
