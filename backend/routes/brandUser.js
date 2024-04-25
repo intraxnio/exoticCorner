@@ -1387,7 +1387,7 @@ try {
             <div class="d-md-flex justify-content-between">
             
             <div class="mt-5 mt-md-0">
-                <p class="text-primary">Shipping Address</p>
+                <p class="text-primary">Delivery Address</p>
                 <h3>${companyName}</h3>
                 <ul class="list-unstyled">
                     <li>${companyAddress}</li>
@@ -1402,6 +1402,7 @@ try {
                     <tr class="bg-primary-subtle">
                         <th scope="col">S.No</th>
                         <th scope="col">Item</th>
+                        <th scope="col">Unit Weight</th>
                         <th scope="col">Quantity</th>
                         <th scope="col">Price</th>
                         <th scope="col">Total</th>
@@ -1413,9 +1414,10 @@ try {
                 <tr>
                   <td>${index + 1}</td>
                   <td>${product.name}</td>
+                  <td>${product.min_order} ${product.units}</td>
                   <td>${product.quantity}</td>
-                  <td>Rs. ${product.price}/${product.units}</td>
-                  <td>Rs. ${product.quantity * product.price}</td>
+                  <td>Rs. ${product.price}.00</td>
+                  <td>Rs. ${product.quantity * product.price}.00</td>
                 </tr>
               `).join('')}
 
@@ -1425,7 +1427,7 @@ try {
                         <td></td>
                         <td></td>
                         <td class="text-primary fw-bold">Grand-Total</td>
-                        <td class="text-primary fw-bold">Rs.${amountToPay}</td>
+                        <td class="text-primary fw-bold">Rs.${amountToPay}.00</td>
                     </tr>
                 </tbody>
             </table>
