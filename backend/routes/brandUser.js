@@ -60,9 +60,6 @@ const invoiceQueue = new Queue('invoiceQueue');
 const verifyToken = (req, res, next) => {
 
 
-  console.log('verifyToken hittttt');
-
-
   const authHeader = req.headers['authorization'];
   const { brand_id } = req.body;
   const token = authHeader && authHeader.split(' ')[1];

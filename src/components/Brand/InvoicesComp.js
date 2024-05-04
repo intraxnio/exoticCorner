@@ -136,7 +136,7 @@ const fetchDataFromServer = async (page, pageSize) => {
 
   try {
 
-    const token = Cookies.get('billsBookToken');
+    const token = Cookies.get('bookkeeprToken');
     const response = await axios.post("/api/brand/all-invoices", 
     { brand_id: user.brand_id, page: page, pageSize: pageSize },
     {

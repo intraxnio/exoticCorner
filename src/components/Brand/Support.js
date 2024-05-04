@@ -77,7 +77,7 @@ export default function SupportPage() {
               startIcon={<MailOutlineIcon />}
               style={{marginLeft: '16px', textTransform: 'lowercase'}}
             >
-              support@billsbook.cloud
+              support@bookkeepr.in
             </Button>
           </CardActions>
         </Card>

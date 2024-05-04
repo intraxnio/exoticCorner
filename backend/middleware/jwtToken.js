@@ -32,7 +32,7 @@ const token = sign({id: user._id, email: user.email}, `${process.env.JWT_SECRET_
     { new: true }
   );
   
-  res.status(201).cookie('billsBookToken', token, options).json({
+  res.status(201).cookie('bookkeeprToken', token, options).json({
     token,
     brandObj,
   });

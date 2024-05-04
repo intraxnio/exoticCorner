@@ -35,7 +35,7 @@ function BrandMainScreen() {
   const fetchData = async () => {
     try {
 
-      const token = Cookies.get('billsBookToken'); // Retrieve the token from cookies
+      const token = Cookies.get('bookkeeprToken'); // Retrieve the token from cookies
 
       if(user.brand_id && token){
 
