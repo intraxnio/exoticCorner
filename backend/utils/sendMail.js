@@ -11,13 +11,13 @@ const sendMail = async (options) =>{
         port: 587,
         secure: false,
         auth: {
-          user: "exoticcornerapp@gmail.com",
-          pass: "fkbxytcwfwrwoend",
+          user: "billsbookcloud@gmail.com",
+          pass: "oiggnzittvuiflyd",
         },
       });
 
     const mailOptions = {
-        from: 'exoticcornerapp@gmail.com',
+        from: 'billsbookcloud@gmail.com',
         to: options.to,
         subject: options.subject,
         text: options.text,

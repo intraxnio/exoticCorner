@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Typography, Box, Grid, Stack, Button} from "@mui/material";
+import { Typography, TextField, ClickAwayListener, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Button,Dialog, DialogTitle, DialogContent, DialogActions, Select, MenuItem } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { addToCart } from "../../store/cartSlice";
-import { removeFromCart } from "../../store/cartSlice";
-import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import AddLinkIcon from '@mui/icons-material/AddLink';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { deepOrange, green, purple, blue } from '@mui/material/colors';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from "react-toastify";
+import InventoryOutlinedIcon from '@mui/icons-material/InventoryOutlined';
+import CircularProgress from '@mui/material/CircularProgress';
+
 
 
 
@@ -38,92 +39,144 @@ const theme = createTheme({
 function ProductList() {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [productName, setProductName] = useState('');
+  const [unitPrice, setUnitPrice] = useState(0);
+  const [unitType, setUnitType] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [currentProductId, setCurrentProductId] = useState(null);
+
+
+
   const user = useSelector((state) => state.brandUser);
-  const dispatch = useDispatch();
-  const [addedToCart, setAddedToCart] = useState({});
-  const cart = useSelector((state) => state.cart);
-  const [totalCartValue, setTotalCartValue] = useState(0);
+
+  const handleClickAway = () => {
+    //this function keeps the dialogue open, even when user clicks outside the dialogue. dont delete this function
+  };
+
+  const handleDialogClose = () => {
+    setIsDialogOpen(false);
+  };
+
+  const handleDeleteDialogClose = () => {
+    setIsDeleteDialogOpen(false);
+  };
+
+  const handleDeleteProduct = (productId) => {
+    setCurrentProductId(productId); // Set the current product ID to be deleted
+    // Open confirmation dialog or perform deletion directly, based on your needs
+    setIsDeleteDialogOpen(true); // Open dialog for confirmation
+  };
+
+  const deleteProduct = () => {
+
+    try{
+
+      axios.post("/api/brand/delete-product", {
+        product_id: currentProductId,
+      })
+      .then((ress) => {
+        if (ress.data.deleted) {
+
+          setIsDeleteDialogOpen(false);
+          toast.success("Product Deleted");
+          getBrandProducts();
+
+
+        } else if (!ress.data.deleted) {
+          setIsDeleteDialogOpen(false);
+          toast.warning("Deletion Failed");
+          
+         
+        }
+      })
+      .catch((e) => {
+        // Handle error
+      });
+
+    }
+
+    catch{
+
+    }
+
+   
+  };
 
 
 
   useEffect(() => {
     getBrandProducts();
-    calculateTotalCartValue();
-
-  }, [cart, products]);
+  }, []);
 
   const getBrandProducts = (async () => {
 
     try {
-      axios.get("/api/brand/get-brand-products").then(catResult => {
+
+      setLoading(true);
+      axios.post("/api/brand/get-brand-products", { userId : user.brand_id}).then(catResult => {
   
+        setLoading(false);
         setProducts(catResult.data.data);
   
       }).catch(er => {
-        // Handle error
+        setLoading(false);
+        toast.warning("Server is busy, try again later.");
       });
     } catch (error) {
-      console.error(error);
+
+      setLoading(false);
+      toast.error("Server is busy, try again later.");
+
     }
   });
 
-  const handleAddToCart = (fruitsData) => {
-    dispatch(addToCart({
-      product_id: fruitsData._id,
-      name: fruitsData.product_name,
-      price: fruitsData.price,
-      image: fruitsData.product_image,
-      units: fruitsData.units,
-      min_order : fruitsData.min_order,
-      quantity: 1 // Assuming initial quantity is 1
-    }));
 
-    setAddedToCart(prevState => ({
-      ...prevState,
-      [fruitsData._id]: true
-    }));
-    toast.success('Added to cart');
+  const handleUnitTypeChange = (event) => {
+    setUnitType(event.target.value);
   };
 
-  const handleRemoveFromCart = (productId) => {
-    const productIndex = cart.findIndex(item => item.product_id === productId);
-    if (productIndex !== -1) {
-      const updatedCart = [...cart];
-      updatedCart[productIndex] = {
-        ...updatedCart[productIndex],
-        quantity: updatedCart[productIndex].quantity - 1
-      };
-      if (updatedCart[productIndex].quantity <= 0) {
-        updatedCart.splice(productIndex, 1); // Remove the product if quantity is 0 or less
+  const addNewProduct = async (e) => {
+    e.preventDefault();
+
+    if(!productName || !unitPrice || !unitType){
+        toast.warning("Enter All Details");
       }
-      dispatch(removeFromCart({ productId }));
-      setAddedToCart(updatedCart.reduce((acc, item) => {
-        acc[productId] = true;
-        return acc;
-      }, {}));
-      toast.success('Removed from cart');
+
+      else {
+
+
+      await axios.post("/api/brand/add-new-product",
+        { brand_id : user.brand_id, productName: productName, unitPrice : unitPrice, unitType : unitType })
+      .then((res) => {
+
+            setLoading(true);
+
+            if(!res.data.productAdded){
+                setLoading(false);
+                toast.error("Error! Please try again.");
+
+            }
+            else if(res.data.productAdded){
+                
+                toast.success("Product Added");
+                setLoading(false);
+                setIsDialogOpen(false);
+                getBrandProducts();
+               
+                  }
+
+      })
+      .catch((err) => {
+      
+          toast.error("Server Error. Please try again later.");
+      });
+
     }
+
+    
   };
-  
-  const goToCartScreen = ()=> {
-    navigate('/brand/cart');
-  }
-  
-
-  const calculateTotalCartValue = () => {
-    let totalValue = 0;
-    cart.forEach(item => {
-      const fruit = products.find(fruit => fruit._id === item.product_id);
-      if (fruit) {
-        totalValue += parseFloat(fruit.price) * item.quantity;
-      }
-    });
-    setTotalCartValue(totalValue.toFixed(2));
-  };
-
-
-
-
 
 
   return (
@@ -131,97 +184,175 @@ function ProductList() {
     <ThemeProvider theme={theme}>
     
 
-
-
-      <Button
-      startIcon = { < ShoppingCartOutlinedIcon />}
+<Button
+      startIcon = { < AddLinkIcon />}
       variant="outlined"
       color="primary"
-      onClick={()=>{ goToCartScreen()}}
-      sx={{ color: deepOrange[500], marginBottom : '12px'}}
+      onClick={()=> setIsDialogOpen(true)}
+      sx={{ marginTop: "14px", color: deepOrange[500]}}
       style={{
         cursor: 'pointer',
         textDecoration: 'none',
-        textTransform: 'none',
-
+        textTransform: 'none'
       }} 
       >
-     Rs. {totalCartValue}
+      Add Product
       </Button>
 
-
-      <Box style={{ height: 'calc(100vh - 200px)', overflowY: 'auto' }}>
-<Grid container spacing={2} sx={{ marginBottom : '46px'}}>
-{products.map((fruitsData, index) => (
-  <Grid item key={index} xs={6} sm={6} md={3} lg={2} marginTop={1}>
-    <Box
-      width="100%"
-      height="100%"
-      border="1px solid #ccc"
-      borderRadius={1}
-      textAlign="center"
-    >
-    <img
-      src={fruitsData.product_image}
-      alt={fruitsData.product_name}
-      style={{ maxWidth: '100%', maxHeight: '100%' }}
-    />
-
-    <Stack sx={{ display : 'flex', flexDirection : 'row', justifyContent: 'space-between', alignItems: 'center', margin: '0 6px' }}>
-      <Typography sx={{ fontSize: '16px' }}>{fruitsData.product_name}</Typography>
-      <Typography sx={{ fontSize: '16px' }}>{fruitsData.min_order}{fruitsData.units}</Typography>
-    </Stack>
-    <Typography sx={{ fontSize: '18px', marginTop: '6px' }}>Rs. {fruitsData.price}</Typography>
-
-{cart.find(item => item.product_id === fruitsData._id) ? (
-
-              <Stack sx={{display : 'flex', flexDirection : 'row', alignItems : 'center', marginBottom : '16px'}}>
-                <Box 
-                border="1px solid orange"
-                borderRadius={1} 
-                sx={{ 
-                  paddingX: '16px',
-                  paddingY: '4px', 
-                  marginTop: '16px', 
-                  marginLeft : '12px', 
-                  marginRight : '12px',
-                  cursor: 'pointer',
-                  textDecoration: 'none',
-                  textTransform: 'none',
-                  color : 'orange'
-                 }} 
-                onClick={() => handleRemoveFromCart(fruitsData._id)}>
-                  -
-                </Box>
-                <div style={{ marginTop: '8px', marginRight : '12px', fontWeight : '500'}}variant="outlined">{cart.find(item => item.product_id === fruitsData._id).quantity}</div>
-                
-                <Box 
-                border="1px solid orange"
-                borderRadius={1} 
-                sx={{ 
-                  paddingX: '14px',
-                  paddingY: '4px', 
-                  marginTop: '16px', 
-                  cursor: 'pointer',
-                  textDecoration: 'none',
-                  textTransform: 'none',
-                  color : 'orange' }} 
-                onClick={() => handleAddToCart(fruitsData)}>
-                  +
-                </Box>
-              </Stack>
-            ) : (
-              <Button variant="outlined" color="primary" size="medium" style={{ marginTop: '16px', marginBottom : '16px' }} onClick={() => handleAddToCart(fruitsData)}>Add to Cart</Button>
-            )}
-    </Box>
-  </Grid>
-))}
-</Grid>
-
-</Box>
+  {loading ? (<CircularProgress />) : (<>
 
 
-<ToastContainer autoClose= {1000}/>
+{products !== null && products.length !== 0  ? ( 
+
+  <>
+
+
+    <Grid container spacing={2} marginTop={2}>
+      <Grid item xs={12}>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>S.No</TableCell>
+                <TableCell>Product Name</TableCell>
+                <TableCell>Unit Price</TableCell>
+                <TableCell>Action</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {products.map((product, index) => (
+                <TableRow key={product._id}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{product.product_name}</TableCell>
+                  <TableCell>Rs. {product.unit_price}</TableCell>
+                  <TableCell>
+                    <IconButton aria-label="delete" onClick={() => handleDeleteProduct(product._id)}>
+                      <DeleteIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Grid>
+    </Grid>
+
+  </>) : (
+
+<div
+style={{
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  height: "50vh", // Adjust the height as needed
+}}
+>
+<InventoryOutlinedIcon style={{ fontSize: '60px', marginBottom: '20px', color: '#5D12D2'}}/>
+<div> Add products to inventory</div>
+</div>
+
+  )}
+
+  </>)}
+
+
+
+
+    {products && (
+        <ClickAwayListener onClickAway={handleClickAway}>
+          <Dialog
+            open={isDialogOpen}
+            onClose={handleDialogClose}
+            disableEscapeKeyDown
+            keepMounted
+          >
+            <DialogContent dividers>
+          
+            <Typography sx={{fontSize: '16px', marginTop: '5px'}} >
+               Enter Product Details
+              </Typography>
+             
+              <TextField
+                type="text"
+                id="productName"
+                onChange={(e) => {
+                    setProductName(e.target.value);
+                }}
+                margin="normal"
+                variant="outlined"
+                label="Product Name"
+                value={productName}
+              ></TextField>
+
+              <TextField
+                type="text"
+                id="unitPrice"
+                onChange={(e) => {
+                    setUnitPrice(e.target.value);
+                }}
+                margin="normal"
+                variant="outlined"
+                label="Unit Price"
+                value={unitPrice}
+              ></TextField>
+
+            <Select
+                value={unitType}
+                onChange={handleUnitTypeChange}
+                variant="outlined"
+                label="Unit Type"
+              >
+                <MenuItem value="Kg">Kg</MenuItem>
+                <MenuItem value="Gm">Gms</MenuItem>
+                <MenuItem value="Ton">Ton</MenuItem>
+                <MenuItem value="Ca">Ca</MenuItem>
+                <MenuItem value="Ltr">Ltr</MenuItem>
+              </Select>
+
+
+        </DialogContent>
+            <DialogActions>
+              <Button onClick={()=> setIsDialogOpen(false)} color="primary">
+                Cancel
+              </Button>
+              <Button color="success" 
+              onClick={addNewProduct}
+              >
+                SUBMIT
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </ClickAwayListener>
+      )}
+
+{currentProductId && (
+        <ClickAwayListener onClickAway={handleClickAway}>
+          <Dialog
+            open={isDeleteDialogOpen}
+            onClose={handleDeleteDialogClose}
+            disableEscapeKeyDown
+            keepMounted
+          >
+            <DialogTitle>Are you sure want to delete product ?</DialogTitle>
+
+          
+            <DialogActions>
+              <Button onClick={()=> setIsDeleteDialogOpen(false)} color="primary">
+                Cancel
+              </Button>
+              <Button color="success" 
+              onClick={deleteProduct}
+              >
+                SUBMIT
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </ClickAwayListener>
+      )}
+
+<ToastContainer autoClose= {2000}/>
 
 
 </ThemeProvider>

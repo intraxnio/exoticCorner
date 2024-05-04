@@ -13,16 +13,16 @@ function termsConditions() {
         <p>
         Terms & Conditions: <br /><br />
 
-Last updated on Mar 20th 2024<br />
+Last updated on Mar 10th 2024<br />
 
 The Website Owner, including subsidiaries and affiliates “Website” or “Website Owner” or “we” or “us” or “our” provides the information contained on the website or any of the pages comprising the website “website” to visitors “visitors” cumulatively referred to as “you” or “your” hereinafter 
 subject to the terms and conditions set out in these website terms and conditions, the privacy policy and 
 any other relevant terms and conditions, policies and notices which may be applicable to a specific section 
 or module of the website.
 
-Welcome to our website. If you continue to browse and use this website you are agreeing to comply with and be bound by the following terms and conditions of use, which together with our privacy policy govern ExoticCorner`s relationship with you in relation to this website.
+Welcome to our website. If you continue to browse and use this website you are agreeing to comply with and be bound by the following terms and conditions of use, which together with our privacy policy govern Billsbook`s relationship with you in relation to this website.
 
-The term `ExoticCorner` or `us` or `we` refers to the owner of the website whose registered/operational office is Flat No 102, House No: 7-1-681/MIG, Sai Orchids Apt, Serilingampally, Rangareddy, Hyderabad, Telangana - 500019. The term `you` refers to the user or viewer of our website.
+The term `BillsBook` or `us` or `we` refers to the owner of the website whose registered/operational office is Plot no - 20, 2nd Floor, Beside Lucid Diagnostics, Kukatpally, Hyderabad TELANGANA 500072. The term `you` refers to the user or viewer of our website.
 
         </p>
     </div>
@@ -53,7 +53,7 @@ Unauthorized use of this website may give rise to a claim for damages and/or be 
   
 From time to time this website may also include links to other websites. These links are provided for your convenience to provide further information.
 
-You may not create a link to this website from another website or document without ExoticCorner`s prior written consent.
+You may not create a link to this website from another website or document without BillsBook`s prior written consent.
 
 Your use of this website and any dispute arising out of such use of the website is subject to the laws of India or other regulatory authority.
 

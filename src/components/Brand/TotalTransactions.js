@@ -1,9 +1,9 @@
 import React, { useState, useEffect} from 'react'
 import axios from 'axios';
 import { Box, Typography, Stack } from '@mui/material';
+import NorthOutlinedIcon from '@mui/icons-material/NorthOutlined';
 import { useSelector } from "react-redux";
 import CircularProgress from '@mui/material/CircularProgress';
-
 
 
 
@@ -12,7 +12,7 @@ function TotalTransactions() {
   const [loading, setLoading] = useState(false);
   const [totalCampaigns, setTotalCampaigns] = useState('');
   const user = useSelector((state) => state.brandUser);
-  const baseUrl = "http://localhost:8000/api";
+  // const baseUrl = "http://localhost:8000/api";
 
 
 
@@ -36,7 +36,7 @@ function TotalTransactions() {
       setLoading(true);
       try {
 
-        axios.post(baseUrl + "/brand/get-total-transactions", {
+        axios.post("/api/brand/get-total-transactions", {
           userId: user.brand_id,
         }).then(ress=>{
     
@@ -67,7 +67,7 @@ function TotalTransactions() {
         borderRadius:'10px',
     }}
     > 
-        <Typography sx={{ fontSize: '16px'}}>Total Payments</Typography>
+        <Typography sx={{ fontSize: '16px'}}>Total Successful Payments</Typography>
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         {loading ? (

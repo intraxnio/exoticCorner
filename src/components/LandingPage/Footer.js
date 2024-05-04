@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from 'react-router-dom';
-import linkedin from "../../images/icon-instagram.png"
+import linkedin from "../../images/icon-linkedin.png"
 
 export default function Footer() {
   return (
@@ -17,6 +17,7 @@ export default function Footer() {
                 <li className="footer-content-text"><Link to="/cancellation-refund" className="footer-subhead-decoration">Cancellation & Refund</Link></li>
                 <li className="footer-content-text"><Link to="/shipping-policy" className="footer-subhead-decoration">Shipping Policy</Link></li>
                 <li className="footer-content-text"><Link to="/contact-us" className="footer-subhead-decoration">Contact Us</Link></li>
+                <li className="footer-content-text"><Link to="/pricing" className="footer-subhead-decoration">Pricing</Link></li>
                 {/* <li className="footer-content-text"><Link to="/sitemap.xml" className="footer-subhead-decoration">Sitemap</Link></li> */}
 
               </ul>
@@ -41,16 +42,13 @@ export default function Footer() {
           <div className="container col-sm-12 col-12 col-md-3 col-lg-3 my-2">
             <div className="div">
               <ul>
-                <li className="footer-head-text">Follow us</li>
-                {/* 
-                <li className="footer-content-text">
+                {/* <li className="footer-head-text">Compare</li> */}
+                <li className="footer-head-text">Follow Us</li>
+                {/* <li className="footer-content-text">
                  Freshbooks Alternative
                 </li>
                 <li className="footer-content-text">
                  Quickbooks Alternative
-                </li>
-                <li className="footer-content-text">
-                 Zohobooks Alternative
                 </li>
                 <li className="footer-content-text">
                  Xero Alternative
@@ -60,14 +58,18 @@ export default function Footer() {
                 </li>
                 <li className="footer-content-text">
                  Netsuite Alternative
-                </li>
+                </li> */}
                
 
-                <li className="footer-head-text pt-4">
+                {/* <li className="footer-head-text pt-4">
                   Follow us 
                 </li> */}
                 <li className="footer-content-text my-1">
-                <Link to="https://www.instagram.com/exoticfruitscorner/" target="_blank" rel="noopener noreferrer"><a><img  className="img-fluid rounded icon-image" src={linkedin} alt="linkedin-icon" width={38} height={22} /></a></Link>
+                  {/* <Link href="https://www.instagram.com/broadreach.in/"><a><img  className="img-fluid rounded icon-image" src={instagram} alt="instagram-icon" width={50} height={25} /></a></Link> */}
+                  {/* <Link href="https://www.facebook.com/broadreach.in"><a><img  className="img-fluid rounded icon-image" src={facebook} alt="facebook-icon" width={50} height={25} /></a></Link> */}
+                  {/* <Link href="https://www.youtube.com"><a><Image  className="img-fluid rounded icon-image mt-1" src={youtube} alt="youtube-icon" width={55} height={35} /></a></Link>
+                  <Link href="https://www.twitter.com"><a><Image  className="img-fluid rounded icon-image" src={twitter} alt="twitter-icon" width={50} height={25} /></a></Link> */}
+                  <Link to="https://www.linkedin.com/company/billsbook" target="_blank" rel="noopener noreferrer"><a><img  className="img-fluid rounded icon-image" src={linkedin} alt="linkedin-icon" width={38} height={22} /></a></Link>
 
                   
                 </li>
@@ -79,9 +81,8 @@ export default function Footer() {
 
 
         <div className="container text-center my-3">
-          <span className="fw-normal" style={{color: "#B9B4C7"}}>&copy;2024, ForestKisan Organic Products. All Rights Reserved.</span>
+          <span className="fw-normal" style={{color: "#B9B4C7"}}>&copy;2024, Linck One Enterprises. All Rights Reserved.</span>
         </div>
-
       </div>
     </>
   );

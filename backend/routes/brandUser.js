@@ -15,7 +15,6 @@ const Razorpay = require('razorpay');
 const sendMail = require("../utils/sendMail");
 const Queue = require('bull');
 const puppeteer = require('puppeteer');
-var jwt = require("jsonwebtoken");
 const { validatePaymentVerification } = require('razorpay/dist/utils/razorpay-utils');
 const utc = require('dayjs/plugin/utc');
 const timezone = require('dayjs/plugin/timezone');
@@ -42,9 +41,6 @@ const s3 = new S3Client({
 const razorpayKey = process.env.RZP_KEY;
 const razorpaySecret = process.env.RZP_SECRET;
 
-// const razorpayKey = 'rzp_live_WJvHoE0hLYu093';
-// const razorpaySecret = 'U1dHupPIn8NVUU8rsSttX5fU';
-
 const storage = multer.memoryStorage();
 const upload = multer({
   storage: storage,
@@ -54,16 +50,23 @@ const generatePin = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
-const invoiceQueue = new Queue('invoiceQueue');
-
 const randomInvoiceNumber = () => {
   return Math.floor(10000000 + Math.random() * 90000000).toString().substring(0, 8);
 };
 
+const invoiceQueue = new Queue('invoiceQueue');
+
+
 const verifyToken = (req, res, next) => {
+
+
+  console.log('verifyToken hittttt');
+
+
   const authHeader = req.headers['authorization'];
   const { brand_id } = req.body;
   const token = authHeader && authHeader.split(' ')[1];
+
 
   if (!token) {
     return res.status(401).json({ message: 'Unauthorized: Token missing' });
@@ -72,11 +75,53 @@ const verifyToken = (req, res, next) => {
   Brand.findById(brand_id).then( async (result)=>{
 
     if(result && token === result.access_token){
+  console.log('token matched');
+
       next();
     }
 
     else{
+  console.log('token NOT matched');
+
       return res.status(401).json({ message: 'Unauthorized: Invalid token' });
+
+    }
+
+  }).catch((err) =>{
+
+  console.log('token error:', err);
+
+
+    return res.status(500).send({
+      error: "Internal server error",
+      data: null,
+      message: "An error occurred",
+    });
+
+  })
+
+};
+
+
+router.post("/check-user-token", async function (req, res) {
+
+  const { brand_id, token } = req.body;
+  const pin = generatePin();
+
+  Brand.findById(brand_id).then( async (result)=>{
+
+    if(result && token === result.access_token){
+
+    res.status(200).send({ tokenMatches : true});
+    res.end();
+
+    }
+
+    else{
+
+      res.status(200).send({ tokenMatches: false});
+      res.end();
+
 
     }
 
@@ -90,13 +135,13 @@ const verifyToken = (req, res, next) => {
 
   })
 
-};
 
+});
 
 router.post("/signup-brand", async (req, res, next) => {
 
   try {
-    const { email, password, brand, address } = req.body;
+    const { email, password, brand } = req.body;
     const hashedPassword = bcrypt.hashSync(password, 10);
     const lowerCaseEmail = email.toLowerCase();
     const pin = generatePin();
@@ -104,7 +149,7 @@ router.post("/signup-brand", async (req, res, next) => {
 
     const options = {
       to: email,
-      subject: "Verify Account - Exotic Corner",
+      subject: "Verify Account - Billsbook",
       text: `Your 6-digit PIN: ${pin}`,
   }
 
@@ -113,7 +158,7 @@ router.post("/signup-brand", async (req, res, next) => {
     const existingUserInTemp = await TempBrand.findOne({ email : lowerCaseEmail});
 
    
-    if (!lowerCaseEmail || !password || !brand || !address) {
+    if (!lowerCaseEmail || !password || !brand) {
       return res.status(400).send({
          error: "All fields are mandatory",
          data: null,
@@ -133,7 +178,6 @@ router.post("/signup-brand", async (req, res, next) => {
 
       existingUserInTemp.password = hashedPassword;
       existingUserInTemp.brand_name = brand;
-      existingUserInTemp.outlet_address = address;
       existingUserInTemp.reset_pin = pin;
       existingUserInTemp.save();
       await sendMail(options);
@@ -147,8 +191,7 @@ router.post("/signup-brand", async (req, res, next) => {
       email: lowerCaseEmail,
       password: hashedPassword,
       brand_name: brand,
-      reset_pin : pin,
-      outlet_address : address
+      reset_pin : pin
     });
     await sendMail(options);
 
@@ -208,43 +251,6 @@ router.post("/brand-login", async (req, res, next) => {
   }
 });
 
-
-router.post("/check-user-token", async function (req, res) {
-
-  const { brand_id, token } = req.body;
-  const pin = generatePin();
-
-  
-  Brand.findById(brand_id).then( async (result)=>{
-
-    if(result && token === result.access_token){
-    
-    res.status(200).send({ tokenMatches : true});
-    res.end();
-
-    }
-
-    else{
-
-      res.status(200).send({ tokenMatches: false});
-      res.end();
-
-
-    }
-
-  }).catch((err) =>{
-
-    return res.status(500).send({
-      error: "Internal server error",
-      data: null,
-      message: "An error occurred",
-    });
-
-  })
-
-
-});
-
 router.post("/check-email-exists-sendMail", async function (req, res) {
 
   const { email } = req.body;
@@ -257,7 +263,7 @@ router.post("/check-email-exists-sendMail", async function (req, res) {
 
       const options = {
         to: email,
-        subject: "Password Reset PIN - Exotic Corner",
+        subject: "Password Reset PIN - Billsbook",
         text: `Your 6-digit PIN: ${pin}`,
     }
 
@@ -280,12 +286,6 @@ router.post("/check-email-exists-sendMail", async function (req, res) {
 
   }).catch((err) =>{
 
-    return res.status(500).send({
-      error: "Internal server error",
-      data: null,
-      message: "An error occurred",
-    });
-
   })
 
 
@@ -305,7 +305,6 @@ router.post("/check-resetPin-withDb-brandTemps", async function (req, res) {
         email: lowerCaseEmail,
         password: result.password,
         brand_name: result.brand_name,
-        outlet_address: result.outlet_address,
         reset_pin : pin,
         balance : 0,
         purchased_plan : '',
@@ -328,12 +327,6 @@ router.post("/check-resetPin-withDb-brandTemps", async function (req, res) {
     }
 
   }).catch((err) =>{
-
-    return res.status(502).send({
-      error: "Internal Server Error",
-      data: null,
-      message: "Internal Server Error",
-    });
 
   })
 
@@ -367,45 +360,15 @@ router.post("/check-resetPin-withDb", async function (req, res) {
 
 });
 
-// router.post("/update-password", async function (req, res) {
 
-//   const { userId, password } = req.body;
-//   const hashedPassword = bcrypt.hashSync(password, 10);
-
-  
-//   Brand.findById(userId).then(async (result)=>{
-
-//     if(result){
-
-//       await Brand.findByIdAndUpdate(result._id, { password: hashedPassword });
- 
-//   res.status(200).send({ success: true});
-//   res.end();
-
-
-//     }
-
-//     else{
-
-//       res.status(200).send({ success: false});
-//       res.end();
-
-
-//     }
-
-//   }).catch((err) =>{
-
-//   })
-
-// });
 
 router.post("/update-password", async function (req, res) {
 
-  const { email, password } = req.body;
+  const { userId, password } = req.body;
   const hashedPassword = bcrypt.hashSync(password, 10);
 
   
-  Brand.findOne({email : email}).then(async (result)=>{
+  Brand.findById(userId).then(async (result)=>{
 
     if(result){
 
@@ -414,6 +377,52 @@ router.post("/update-password", async function (req, res) {
   res.status(200).send({ success: true});
   res.end();
 
+
+    }
+
+    else{
+
+      res.status(200).send({ success: false});
+      res.end();
+
+
+    }
+
+  }).catch((err) =>{
+
+  })
+
+});
+
+
+//below code is for updating password from profile settings page
+
+router.post("/change-password", async function (req, res) {
+
+  const { userId, password, newPassword } = req.body;
+  const hashedPassword = bcrypt.hashSync(newPassword, 10);
+
+  Brand.findById(userId).select("+hashPassword").then((result)=>{
+
+    if(result){
+
+      bcrypt.compare(password, result.password, async function (err1, ress) {
+        if (ress === true) {
+
+          await Brand.findByIdAndUpdate(result._id, { password: hashedPassword });
+          res.status(200).send({ success: true});
+          res.end();
+        
+  
+        } else {
+          return res.status(400).send({
+            error: "Wrong current password",
+            data: null,
+            message: "Wrong current password",
+          });
+        }
+  
+      });
 
     }
 
@@ -443,67 +452,21 @@ router.post("/check-kyc-status", async function (req, res) {
   res.status(200).send({ approved: true});
   res.end();
 
-
     }
 
     else{
-
       res.status(200).send({ approved: false});
       res.end();
 
-
     }
 
   }).catch((err) =>{
 
-  })
-
-});
-
-
-//below code is for updating password from profile settings page
-
-router.post("/change-password", async function (req, res) {
-
-  const { userId, password, newPassword } = req.body;
-  const hashedPassword = bcrypt.hashSync(newPassword, 10);
-
-  Brand.findById(userId).select("+hashPassword").then((result)=>{
-
-    if(result){
-
-      bcrypt.compare(password, result.password, async function (err1, ress) {
-        if (ress === true) {
-
-          console.log('Correct Password');
-
-          await Brand.findByIdAndUpdate(result._id, { password: hashedPassword });
-          res.status(200).send({ success: true});
-          res.end();
-        
-  
-        } else {
-          console.log('Wrong Password');
-          return res.status(400).send({
-            error: "Wrong current password",
-            data: null,
-            message: "Wrong current password",
-          });
-        }
-  
-      });
-
-    }
-
-    else{
-
-      res.status(200).send({ success: false});
-      res.end();
-
-
-    }
-
-  }).catch((err) =>{
+    return res.status(500).send({
+      error: "Internal server error",
+      data: null,
+      message: "An error occurred",
+    });
 
   })
 
@@ -532,8 +495,8 @@ router.post('/update-brand-logo', upload.single('image'), async function (req, r
 
   const uploadFileAndUpdateBrandLogo = (file, index) => {
     const params = {
-      Bucket: 'exoticcornerbucket', 
-      Key: `productImages/${Date.now()}_${file.originalname}`, 
+      Bucket: 'billsbookbucket', 
+      Key: `brandLogos/${Date.now()}_${file.originalname}`, 
       Body: file.buffer,
       ContentType: file.mimetype,
       ServerSideEncryption: 'AES256',
@@ -574,36 +537,11 @@ router.post('/update-brand-logo', upload.single('image'), async function (req, r
 });
 
 
-router.get('/get-brand-products', async function (req, res){
+router.post('/get-brand-products', async function (req, res){
 
+  const userId = req.body.userId;
 
-  Products.find({'is_del' : false}).then((result)=>{
-
-    if(result){
-
-    res.status(200).send({ data: result});
-    res.end();
-
-    }
-
-    else{
-    res.status(200).send({ data: null });
-    res.end();
-
-    }
-
-  }).catch(e2=>{
-
-    console.log('Error2', e2);
-
-  })
-});
-
-router.post('/get-brand-details', async function (req, res){
-
-  const { brand_id} = req.body;
-
-  Brand.findById(brand_id).then((result)=>{
+  Products.find({'brandUser_id' : userId, 'is_del' : false}).then((result)=>{
 
     if(result){
 
@@ -620,7 +558,11 @@ router.post('/get-brand-details', async function (req, res){
 
   }).catch(e2=>{
 
-    console.log('Error2', e2);
+    return res.status(500).send({
+      error: "Internal server error",
+      data: null,
+      message: "An error occurred",
+    });
 
   })
 });
@@ -688,11 +630,8 @@ router.post('/delete-product', (req, res) => {
 
 router.post("/create-new-invoice", async function (req, res) {
 
-  const { brand_id, payeeName, payeeMobile, totalAmount, selectedProducts} = req.body;
-
+  const { brand_id, payeeName, payeeMobile, totalAmount, selectedProducts, payeeEmail, payeeGst } = req.body;
   const totalAmountInt = parseInt(totalAmount);
-
-  console.log('totalAmount:', totalAmountInt);
   
   Brand.findById(brand_id).then(async (result)=>{
 
@@ -703,13 +642,14 @@ router.post("/create-new-invoice", async function (req, res) {
 
       try {
         // Create payment link
-        const paymentResult = await instance.paymentLink.create({
+        const result = await instance.paymentLink.create({
           amount: totalAmount * 100,
           currency: "INR",
           accept_partial: false,
-          description: "fruits invoice",
+          description: "purchase invoice",
           customer: {
             name: payeeName,
+            email: payeeEmail,
             contact: "+91" + payeeMobile
           },
           notify: {
@@ -717,8 +657,7 @@ router.post("/create-new-invoice", async function (req, res) {
             email: false
           },
           reminder_enable: true,
-          // callback_url: "https://localhost:4700/verifyPayment",
-          // callback_method: "get"
+          
         });
     
         await Invoices.create({
@@ -729,28 +668,38 @@ router.post("/create-new-invoice", async function (req, res) {
           buyer_mobile_number: payeeMobile,
           products_details: selectedProducts,
           invoice_pdf_file: '',
-          shortUrl: paymentResult.short_url,
-          payment_link_id: paymentResult.id,
-          payment_status: 'created',
-          shop_name: 'ForestKisan Organic Products',
-          shop_address: '7-1-681/MIG, Sai Orchids Apt, Serilingampally, Hyderabad, Telangana - 500019.'
-
-
+          buyer_email: payeeEmail ? payeeEmail : '',
+          buyer_gst: payeeGst ? payeeGst : '',
+          shortUrl: result.short_url,
+          payment_link_id: result.id,
+          payment_status: 'created'
         });
-
-        await invoiceQueue.add({ payment_link_id: paymentResult.id });
     
-        res.status(200).send({ invoiceCreated: true});
-        res.end();
+        await invoiceQueue.add({ payment_link_id: result.id }).then( resss=>{
+
+          res.status(200).send({ invoiceCreated: true});
+          res.end();
+
+        }).catch(e3=>{
+
+          return res.status(500).send({
+            error: "Internal server error",
+            data: null,
+            message: "An error occurred",
+          });
+
+        })
+      
       
     
       } catch (error) {
-        console.error("Error generating PDF or saving record:", error.error.description);
+
         return res.status(400).send({
           error: error.error.code,
           data: null,
           message: error.error.description,
         });
+
       }
 
     }
@@ -764,163 +713,97 @@ router.post("/create-new-invoice", async function (req, res) {
 
   }).catch((err) =>{
 
+    return res.status(500).send({
+      error: "Internal server error",
+      data: null,
+      message: "An error occurred",
+    });
+
   })
 
 });
 
-router.post('/all-invoices', async (req, res) => {
 
-  const user_id = req.body.brand_id;
-  let { page, pageSize } = req.body;
+async function processData(data, index) {
 
+  
+  var instance = new Razorpay({ key_id: razorpayKey, key_secret: razorpaySecret, headers: { 'Content-Type': 'application/json' } });
 
-  try {
-
-    const result = await Invoices.find({ 'brandUser_id' : user_id});
-    let invoices;
-    if (page === 0) {
-      invoices = await Invoices.find({ brandUser_id: user_id })
-        .sort({ created_at: -1 }) // Sort by created_at in descending order
-        .limit(pageSize).populate('brandUser_id');
-
-    } else {
-      page = page + 1;
-      invoices = await Invoices.find({ brandUser_id: user_id })
-        .sort({ created_at: -1 }) // Sort by created_at in descending order
-        .skip((page - 1) * pageSize)
-        .limit(pageSize).populate('brandUser_id');
-    }
-
-  const tableData = await Promise.all(invoices.map(async (data, index) => {
-
-    var instance = new Razorpay({ key_id: razorpayKey, key_secret: razorpaySecret, headers: { 'Content-Type': 'application/json' } });
-
-    if (data.payment_status === 'created' && data.route_enabled && !data.is_route_done) {
+  if (data.payment_status === 'created' && data.route_enabled && !data.is_route_done) {
 
 
-        return instance.paymentLink.fetch(data.payment_link_id)
-            .then(async (payment_status_response) => {
+      return instance.paymentLink.fetch(data.payment_link_id)
+          .then(async (payment_status_response) => {
 
-              if (payment_status_response.status === 'paid' && payment_status_response.payments.length !== 0) {
+            if (payment_status_response.status === 'paid' && payment_status_response.payments.length !== 0) {
 
-                const charges = data.brandUser_id.charges;
-                  const totVal = (data.invoice_amount*charges)/100;
-                  const balanceAmount = data.invoice_amount - totVal;
+              const charges = data.brandUser_id.charges;
+                const totVal = (data.invoice_amount*charges)/100;
+                const balanceAmount = data.invoice_amount - totVal;
 
-                try {
+              try {
 
-                  await instance.payments.transfer(payment_status_response.payments[0].payment_id, {
-                    "transfers": [
-                      {
-                        "account": data.linked_account_id,
-                        "amount": balanceAmount*100,
-                        "currency": "INR",
-                        "notes": {
-                          "name": "Bhaskar Sriram",
-                          "roll_no": "IEC2011025"
-                        },
-                        "linked_account_notes": [
-                          "name"
-                        ],
-                        "on_hold": 0,
-                      }
-                    ]
-                  }).then(async (routeResponse)=>{
+                await instance.payments.transfer(payment_status_response.payments[0].payment_id, {
+                  "transfers": [
+                    {
+                      "account": data.linked_account_id,
+                      "amount": balanceAmount*100,
+                      "currency": "INR",
+                      "notes": {
+                        "name": "Bhaskar Sriram",
+                        "roll_no": "IEC2011025"
+                      },
+                      "linked_account_notes": [
+                        "name"
+                      ],
+                      "on_hold": 0,
+                    }
+                  ]
+                }).then(async (routeResponse)=>{
 
-              
-                    await Invoices.findOneAndUpdate(
-                      { payment_link_id: data.payment_link_id },
-                      { $set: { 
-                        payment_status: payment_status_response.status, 
-                        is_route_done: true, 
-                        route_settlement_status : routeResponse.items[0].status,
-                        route_source : routeResponse.items[0].source,
-                        transfer_id : routeResponse.items[0].id } },
-                      { new: true }
-                    );
+            
+                  await Invoices.findOneAndUpdate(
+                    { payment_link_id: data.payment_link_id },
+                    { $set: { 
+                      payment_status: payment_status_response.status, 
+                      is_route_done: true, 
+                      route_settlement_status : routeResponse.items[0].status,
+                      route_source : routeResponse.items[0].source,
+                      transfer_id : routeResponse.items[0].id } },
+                    { new: true }
+                  );
 
-                    await Brand.findByIdAndUpdate(
-                      data.brandUser_id._id,
-                      { $inc: { balance: balanceAmount } },
-                      { new: true }
-                    );
-              
-                  }).catch(err => {
-              
-                    console.log('Route Error:::', err);
-              
-              
-                  });
+                  await Brand.findByIdAndUpdate(
+                    data.brandUser_id._id,
+                    { $inc: { balance: balanceAmount } },
+                    { new: true }
+                  );
+            
+                }).catch(err => {
+            
+                  console.log('Route Error:::', err);
+            
+            
+                });
 
-                 
-              
-              
-                  return {
-                    id: index + 1,
-                    invoiceId: data._id,
-                    payeeName: data.buyer_name,
-                    payeeMobile: data.buyer_mobile_number,
-                    invoice: data._id,
-                    invoiceAmount: data.invoice_amount,
-                    paymentStatus: payment_status_response.status,
-                    createdDate: data.created_at,
-                  };
-              
-                } catch (error) {
-                  console.error('Error occurred:', error);
-              
-                  return {
-                    id: index + 1,
-                    invoiceId: data._id,
-                    payeeName: data.buyer_name,
-                    payeeMobile: data.buyer_mobile_number,
-                    invoice: data._id,
-                    invoiceAmount: data.invoice_amount,
-                    paymentStatus: "Error",
-                    createdDate: data.created_at,
-                  };
-                }
-              }
-
-else {
-
-  return Invoices.findOneAndUpdate(
-    { payment_link_id: data.payment_link_id },
-    { $set: { payment_status: payment_status_response.status } },
-    { new: true }
-).then(() => {
-
-    return {
-        id: index + 1,
-        invoiceId: data._id,
-        payeeName: data.buyer_name,
-        payeeMobile: data.buyer_mobile_number,
-        invoice: data._id,
-        invoiceAmount: data.invoice_amount,
-        paymentStatus: payment_status_response.status,
-        createdDate: data.created_at,
-    };
-
-})
-.catch(error => {
-// Handle errors if any
-return {
-    id: index + 1,
-    invoiceId: data._id,
-    payeeName: data.buyer_name,
-    payeeMobile: data.buyer_mobile_number,
-    invoice: data._id,
-    invoiceAmount: data.invoice_amount,
-    paymentStatus: "Error",
-    createdDate: data.created_at,
-};
-});
-
-}
-
-            }) .catch(error => {
-              // Handle errors if any
-              return {
+               
+            
+            
+                return {
+                  id: index + 1,
+                  invoiceId: data._id,
+                  payeeName: data.buyer_name,
+                  payeeMobile: data.buyer_mobile_number,
+                  invoice: data._id,
+                  invoiceAmount: data.invoice_amount,
+                  paymentStatus: payment_status_response.status,
+                  createdDate: data.created_at,
+                };
+            
+              } catch (error) {
+                console.error('Error occurred:', error);
+            
+                return {
                   id: index + 1,
                   invoiceId: data._id,
                   payeeName: data.buyer_name,
@@ -929,35 +812,99 @@ return {
                   invoiceAmount: data.invoice_amount,
                   paymentStatus: "Error",
                   createdDate: data.created_at,
-              };
-              });
-           
-    } 
+                };
+              }
+            }
 
-    else if (data.payment_status === 'created' && !data.route_enabled) {
+else {
 
-      return instance.paymentLink.fetch(data.payment_link_id)
-          .then(async (payment_status_response) => {
+return Invoices.findOneAndUpdate(
+  { payment_link_id: data.payment_link_id },
+  { $set: { payment_status: payment_status_response.status } },
+  { new: true }
+).then(() => {
 
-              return Invoices.findOneAndUpdate(
-                  { payment_link_id: data.payment_link_id },
-                  { $set: { payment_status: payment_status_response.status } },
+  return {
+      id: index + 1,
+      invoiceId: data._id,
+      payeeName: data.buyer_name,
+      payeeMobile: data.buyer_mobile_number,
+      invoice: data._id,
+      invoiceAmount: data.invoice_amount,
+      paymentStatus: payment_status_response.status,
+      createdDate: data.created_at,
+  };
+
+})
+.catch(error => {
+// Handle errors if any
+return {
+  id: index + 1,
+  invoiceId: data._id,
+  payeeName: data.buyer_name,
+  payeeMobile: data.buyer_mobile_number,
+  invoice: data._id,
+  invoiceAmount: data.invoice_amount,
+  paymentStatus: "Error",
+  createdDate: data.created_at,
+};
+});
+
+}
+
+          }) .catch(error => {
+            // Handle errors if any
+            return {
+                id: index + 1,
+                invoiceId: data._id,
+                payeeName: data.buyer_name,
+                payeeMobile: data.buyer_mobile_number,
+                invoice: data._id,
+                invoiceAmount: data.invoice_amount,
+                paymentStatus: "Error",
+                createdDate: data.created_at,
+            };
+            });
+         
+  } 
+
+  else if (data.payment_status === 'created' && !data.route_enabled) {
+
+    return instance.paymentLink.fetch(data.payment_link_id)
+        .then(async (payment_status_response) => {
+
+            return Invoices.findOneAndUpdate(
+                { payment_link_id: data.payment_link_id },
+                { $set: { payment_status: payment_status_response.status } },
+                { new: true }
+            ).then(async () => {
+
+              if(payment_status_response.status === 'paid'){
+
+                const charges = data.brandUser_id.charges;
+                const totVal = (data.invoice_amount*charges)/100;
+                const balanceAmount = data.invoice_amount - totVal;
+
+                await Brand.findByIdAndUpdate(
+                  data.brandUser_id._id,
+                  { $inc: { balance: balanceAmount } },
                   { new: true }
-              ).then(async () => {
+                );
 
-                if(payment_status_response.status === 'paid'){
+                return {
+                  id: index + 1,
+                  invoiceId: data._id,
+                  payeeName: data.buyer_name,
+                  payeeMobile: data.buyer_mobile_number,
+                  invoice: data._id,
+                  invoiceAmount: data.invoice_amount,
+                  paymentStatus: payment_status_response.status,
+                  createdDate: data.created_at,
+              };
 
-                  const charges = data.brandUser_id.charges;
-                  const totVal = (data.invoice_amount*charges)/100;
-                  const balanceAmount = data.invoice_amount - totVal;
+              }
 
-                  await Brand.findByIdAndUpdate(
-                    data.brandUser_id._id,
-                    { $inc: { balance: balanceAmount } },
-                    { new: true }
-                  );
-
-                  return {
+                return {
                     id: index + 1,
                     invoiceId: data._id,
                     payeeName: data.buyer_name,
@@ -967,51 +914,90 @@ return {
                     paymentStatus: payment_status_response.status,
                     createdDate: data.created_at,
                 };
+            });
+        })
+        .catch(error => {
+            // Handle errors if any
 
-                }
-
-                  return {
-                      id: index + 1,
-                      invoiceId: data._id,
-                      payeeName: data.buyer_name,
-                      payeeMobile: data.buyer_mobile_number,
-                      invoice: data._id,
-                      invoiceAmount: data.invoice_amount,
-                      paymentStatus: payment_status_response.status,
-                      createdDate: data.created_at,
-                  };
-              });
-          })
-          .catch(error => {
-              // Handle errors if any
-              return {
-                  id: index + 1,
-                  invoiceId: data._id,
-                  payeeName: data.buyer_name,
-                  payeeMobile: data.buyer_mobile_number,
-                  invoice: data._id,
-                  invoiceAmount: data.invoice_amount,
-                  paymentStatus: "Error",
-                  createdDate: data.created_at,
-              };
-          });
-
-  } 
-    
-    else {
-
-        // No need for an asynchronous operation, return immediately
-        return Promise.resolve({
-            id: index + 1,
-            invoiceId: data._id,
-            payeeName: data.buyer_name,
-            payeeMobile: data.buyer_mobile_number,
-            invoice: data._id,
-            invoiceAmount: data.invoice_amount,
-            paymentStatus: data.payment_status,
-            createdDate: data.created_at,
+            console.log('processData error:', error);
+            return {
+                id: index + 1,
+                invoiceId: data._id,
+                payeeName: data.buyer_name,
+                payeeMobile: data.buyer_mobile_number,
+                invoice: data._id,
+                invoiceAmount: data.invoice_amount,
+                paymentStatus: "Error",
+                createdDate: data.created_at,
+            };
         });
+
+} 
+  
+  else {
+
+      // No need for an asynchronous operation, return immediately
+      return Promise.resolve({
+          id: index + 1,
+          invoiceId: data._id,
+          payeeName: data.buyer_name,
+          payeeMobile: data.buyer_mobile_number,
+          invoice: data._id,
+          invoiceAmount: data.invoice_amount,
+          paymentStatus: data.payment_status,
+          createdDate: data.created_at,
+      });
+  }
+}
+
+router.post('/all-invoices', verifyToken, async (req, res) => {
+
+  const user_id = req.body.brand_id;
+  let { page, pageSize } = req.body;
+
+
+  try {
+
+    const result = await Invoices.find({ 'brandUser_id' : user_id, is_del : false});
+    let invoices;
+    if (page === 0) {
+      invoices = await Invoices.find({ brandUser_id: user_id, is_del : false })
+        .sort({ created_at: -1 }) // Sort by created_at in descending order
+        .limit(pageSize).populate('brandUser_id');
+
+    } else {
+      page = page + 1;
+      invoices = await Invoices.find({ brandUser_id: user_id, is_del : false })
+        .sort({ created_at: -1 }) // Sort by created_at in descending order
+        .skip((page - 1) * pageSize)
+        .limit(pageSize).populate('brandUser_id');
+
+
     }
+
+
+  const tableData = await Promise.all(invoices.map(async (data, index) => {
+
+    try{
+
+      return await processData(data, index);
+
+  
+      }
+  
+      catch (error) {
+        console.error('Error processing data:', error);
+        return {
+          id: index + 1,
+          invoiceId: data._id,
+          payeeName: data.buyer_name,
+          payeeMobile: data.buyer_mobile_number,
+          invoice: data._id,
+          invoiceAmount: data.invoice_amount,
+          paymentStatus: "Error",
+          createdDate: data.created_at,
+        };
+      };
 }));
 
   res.status(200).send({ data: tableData, totalRowCount : result.length });
@@ -1034,7 +1020,7 @@ router.post('/get-total-transactions', async function (req, res){
 
   const user_id = req.body.userId;
 
-  Invoices.find({'brandUser_id': user_id, 'payment_status': 'paid'}).then((result)=>{
+  Invoices.find({'brandUser_id': user_id, 'payment_status': 'paid', 'is_del' : false}).then((result)=>{
 
     if(result){
     res.status(200).send({ data: result.length});
@@ -1061,7 +1047,7 @@ router.post('/get-total-transactions-amount', async function (req, res){
   const user_id = req.body.userId;
   let totalAmount = 0;
 
-  Invoices.find({'brandUser_id': user_id, 'payment_status': 'paid'}).then((result)=>{
+  Invoices.find({'brandUser_id': user_id, 'payment_status': 'paid', 'is_del' : false}).then((result)=>{
 
     if(result){
 
@@ -1106,68 +1092,6 @@ router.post('/get-account-balance', verifyToken, async function (req, res){
   })
 });
 
-
-
-
-router.post('/verifyPayment', async (req, res) => {
-
-  const razorpay_payment_id = req.body.razorpay_payment_id;
-  const razorpay_payment_link_id = req.body.razorpay_payment_link_id;
-  const razorpay_payment_link_reference_id = req.body.razorpay_payment_link_reference_id;
-  const razorpay_payment_link_status = req.body.razorpay_payment_link_status;
-  const razorpay_signature = req.body.razorpay_signature;
-
-  const validationResp = validatePaymentVerification({
-    "payment_link_id": razorpay_payment_link_id,
-    "payment_id": razorpay_payment_id,
-    "payment_link_reference_id": razorpay_payment_link_reference_id,
-    "payment_link_status": razorpay_payment_link_status,
-  }, razorpay_signature , razorpaySecret);
-
-
-  if(validationResp){
-
-    try {
-      const resppp = await Invoices.findOneAndUpdate(
-        { payment_link_id: razorpay_payment_link_id },
-        { $set: { is_payment_captured: true } },
-        { new: true }
-      );
-
-      await Brand.findByIdAndUpdate(
-        resppp.brandUser_id,
-        { $inc: { balance: resppp.invoice_amount } },
-        { new: true }
-      );
-
-      await Invoices.findOne({ payment_link_id : razorpay_payment_link_id}).then( forResp => {
-
-        res.status(200).send({ data: forResp});
-        res.end();
-
-      }).catch(e2=>{
-
-        console.log('Error2', e2);
-    
-      })
-
-
-
-    } catch (error) {
-      console.error('Error updating invoice:', error);
-    }
-
-
-  }
-
-  else{
-
-    console.log('else block');
-  }
-
-});
-
-
 router.post('/is-pdf-link-available', async (req, res) => {
   try {
     const invoiceId = req.body.invoiceId;
@@ -1189,9 +1113,8 @@ router.post('/is-pdf-link-available', async (req, res) => {
       payeeName: result.buyer_name,
       payeeMobile: '+91 ' + result.buyer_mobile_number,
       companyName: result.brandUser_id.brand_name,
-      companyAddress: result.brandUser_id.outlet_address,
-      shopName: result.shop_name,
-      shopAddress: result.shop_address,
+      companyAddress: result.brandUser_id.address,
+      companyGSTIN: result.brandUser_id.gstin,
       productDetails: result.products_details,
       amountToPay: result.invoice_amount
     });
@@ -1213,7 +1136,7 @@ router.post('/is-pdf-link-available', async (req, res) => {
     const pdfBuffer = await page.pdf({ format: 'A4' });
 
     const params = {
-      Bucket: "exoticcornerbucket",
+      Bucket: "billsbookbucket",
       Key: `invoices/${Date.now()}_${result.invoice_number}`,
       Body: pdfBuffer,
       ContentType: 'application/pdf',
@@ -1260,9 +1183,8 @@ invoiceQueue.process(async (job) => {
     payeeName: invoice.buyer_name,
     payeeMobile: '+91 '+ invoice.buyer_mobile_number,
     companyName: invoice.brandUser_id.brand_name,
-    companyAddress: invoice.brandUser_id.outlet_address,
-    shopName: invoice.shop_name,
-    shopAddress: invoice.shop_address,
+    companyAddress: invoice.brandUser_id.address,
+    companyGSTIN: invoice.brandUser_id.gstin,
     productDetails: invoice.products_details,
     amountToPay : invoice.invoice_amount
   });
@@ -1287,7 +1209,7 @@ invoiceQueue.process(async (job) => {
 try {
 
     const params = {
-        Bucket: "exoticcornerbucket",
+        Bucket: "billsbookbucket",
         Key: `invoices/${Date.now()}_${invoice.invoice_number}`,
         Body: pdfBuffer,
         ContentType: 'application/pdf',
@@ -1320,17 +1242,8 @@ try {
 
 
 
+    async function generateInvoice({ date, invoiceNumber, payeeName, payeeMobile, companyName, companyAddress, companyGSTIN, productDetails, amountToPay }) {
 
-
-
-
-
-
-
-
-  async function generateInvoice({ date, invoiceNumber, payeeName, payeeMobile, companyName, companyAddress, shopName, shopAddress, productDetails, amountToPay }) {
-
-      console.log('generateInvoice hit');
       return (
         `
         <!DOCTYPE html>
@@ -1367,42 +1280,26 @@ try {
             <div class="d-md-flex justify-content-between">
                 <div>
                     <p class="text-primary">Invoice To</p>
-                    <h3>${payeeName}</h3>
+                    <h4>${payeeName}</h4>
                     <ul class="list-unstyled">
                         <li>${payeeMobile}</li>
                     </ul>
                 </div>
-
                 <div class="mt-5 mt-md-0">
                     <p class="text-primary">Invoice From</p>
-                    <h3>${shopName}</h3>
+                    <h4>${companyName}</h4>
                     <ul class="list-unstyled">
-                        <li>${shopAddress}</li>
-                        
+                        <li>${companyAddress}</li>
+                        <li>${companyGSTIN}</li>
                     </ul>
                 </div>
             </div>
-
-            
-            <div class="d-md-flex justify-content-between">
-            
-            <div class="mt-5 mt-md-0">
-                <p class="text-primary">Delivery Address</p>
-                <h3>${companyName}</h3>
-                <ul class="list-unstyled">
-                    <li>${companyAddress}</li>
-                </ul>
-            </div>
-
-            
-        </div>
 
             <table class="table border my-5">
                 <thead>
                     <tr class="bg-primary-subtle">
                         <th scope="col">S.No</th>
                         <th scope="col">Item</th>
-                        <th scope="col">Unit Weight</th>
                         <th scope="col">Quantity</th>
                         <th scope="col">Price</th>
                         <th scope="col">Total</th>
@@ -1413,11 +1310,10 @@ try {
                 ${productDetails.map((product, index) => `
                 <tr>
                   <td>${index + 1}</td>
-                  <td>${product.name}</td>
-                  <td>${product.min_order} ${product.units}</td>
+                  <td>${product.product_name}</td>
                   <td>${product.quantity}</td>
-                  <td>Rs. ${product.price}.00</td>
-                  <td>Rs. ${product.quantity * product.price}.00</td>
+                  <td>Rs. ${product.unit_price}/${product.unit_type}</td>
+                  <td>Rs. ${product.quantity * product.unit_price}</td>
                 </tr>
               `).join('')}
 
@@ -1427,7 +1323,7 @@ try {
                         <td></td>
                         <td></td>
                         <td class="text-primary fw-bold">Grand-Total</td>
-                        <td class="text-primary fw-bold">Rs.${amountToPay}.00</td>
+                        <td class="text-primary fw-bold">Rs.${amountToPay}</td>
                     </tr>
                 </tbody>
             </table>

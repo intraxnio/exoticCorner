@@ -59,8 +59,8 @@ function Pricing() {
           <div className="border border-primary rounded p-3">
             <div className="row text-center">
               <p><span className="pricing-txt"> Pricing</span></p>
-              <p><span className="pricing-txt-price"> Flat 2%</span><span style={{ fontSize: '22px', paddingTop : '5px', paddingLeft: '4px'}}>(INR)</span></p>
-              <p style={{ marginBottom : '46px'}}>+18% GST on all successful invoice payments</p>
+              <p><span className="pricing-txt-price"> Flat 1%</span><span style={{ fontSize: '22px', paddingTop : '4px', paddingLeft: '4px'}}>(INR)</span></p>
+              <p style={{ marginBottom : '46px'}}>+18% GST on all successful invoice payments.</p>
             </div>
             <div className="features-details">
 
@@ -90,7 +90,7 @@ function Pricing() {
   <p>Reports (PDF)</p>
 </div>
 
-<div className="bb-txt-3 cussLine">
+{/* <div className="bb-txt-3 cussLine">
 <span class="material-icons me-3">search</span>
   <p>GSTIN Search</p><span style={{ fontSize: '12px', paddingTop : '5px', paddingLeft: '4px'}}>(coming soon)</span>
 </div>
@@ -98,7 +98,7 @@ function Pricing() {
 <div className="bb-txt-3 cussLine">
 <span class="material-icons me-3">receipt</span>
   <p>e-invoice upload</p><span style={{ fontSize: '12px', paddingTop : '5px', paddingLeft: '4px'}}>(coming soon)</span>
-</div>
+</div> */}
 
 </div>
             <div className="container my-4 mx-auto d-flex justify-content-center">

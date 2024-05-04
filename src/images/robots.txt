@@ -4,4 +4,4 @@ Disallow: /blog/ghost/
 Disallow: /blog/p/
 Disallow: /blog/subscribe/
 
-Sitemap: https://www.buzzreach.in/sitemap.xml
+Sitemap: https://www.billsbook.cloud/sitemap.xml

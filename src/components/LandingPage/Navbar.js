@@ -5,10 +5,10 @@ import { Link } from 'react-router-dom';
 export default function Navbar() {
     return (
 
-        <nav className="navbar navbar-expand-lg navbar-light">
+        <nav className="navbar navbar-expand-lg navbar-light mt-2">
 
             <div className="container" > 
-                <Link to="/" className="navbar-brand" style={{fontSize: '22px', fontWeight: 500, color: '#6420AA', fontFamily: "Poppins" }} >exotic<span style={{color: '#D80032', fontSize: '28px'}}>.</span>corner</Link>
+                <Link to="/" className="navbar-brand" style={{fontSize: '22px', fontWeight: 500, color: '#11009E', fontFamily: "Poppins" }} >billsbook<span style={{color: '#D80032', fontSize: '28px'}}>.</span></Link>
 
                 {/* <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span className="navbar-toggler-icon"></span>

@@ -1,9 +1,5 @@
 // import logo from './logo.svg';
 import './styles/Home.module.css';
-/* App.css */
-
-// import './styles/bootstrap.css'
-// import './styles/bootstrap.bundle.min.js'
 import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 // import HomePage from './components/HomePage'
 
@@ -25,9 +21,8 @@ import PrivacyPolicy from './components/LandingPage/PrivacyPolicy';
 import CancellationRefund from './components/LandingPage/CancellationRefund';
 import ShippingPolicy from './components/LandingPage/ShippingPolicy';
 import ContactUs from './components/LandingPage/ContactUs';
-import Pricing from './components/LandingPage/Pricing';
 import ForgotPassword from './components/Brand/ForgotPassword';
-import CartPage from './components/Brand/Cart';
+import Pricing from './components/LandingPage/Pricing';
 
 
 
@@ -55,33 +50,14 @@ function App() {
           <Route path="/pricing" element={<Pricing/>}/>
           <Route path="/forgotPassword" element={<ForgotPassword/>}/>
 
-
-          {/* <Route path="/login/brand" element={<BrandLogin/>}/> */}
-
-
         <Route path="/brand/*" element={<BrandSideNavBar />}>
-          <Route index element={<ProductList />} />
+          <Route index element={<BrandMainScreen />} />
+          <Route path="dashboard" element={<BrandMainScreen />} />
           <Route path="profileSettings" element={<ProfileSettings/>}/>
           <Route path="invoices" element={<InvoicesComp/>}/>
-          <Route path="cart" element={<CartPage/>}/>
           <Route path="createInvoice" element={<CreateInvoice/>}/>
           <Route path="products" element={<ProductList/>}/>
           <Route path="support" element={<Support/>}/>
-
-
-
-          {/* <Route path="campaign" element={<CreateCampaign/>}/>
-          <Route path="campaigns/details" element={<BrandShowCampaignDetails/>}/>
-          <Route path="dashboard" element={<BrandMainScreen />} />
-          <Route path="campaigns" element={<CampaignCard />} />
-          <Route path="campaign/requests" element={<ReceivedRequestsTable/>}/>
-          <Route path="campaign/metrics" element={<CampaignCompletedMetrics/>}/>
-          <Route path="campaignMetrics" element={<CampaignMetrics/>}/>
-          <Route path="planDetails" element={<PlanPrices/>}/>
-          <Route path="profileSettings" element={<ProfileSettings/>}/>
-          <Route path="billing/plans" element={<BillingAndPlans/>}/>
-          <Route path="transactions" element={<TransactionHistory/>}/>
-          <Route path="support" element={<SupportPage/>}/> */}
 
         </Route>
         

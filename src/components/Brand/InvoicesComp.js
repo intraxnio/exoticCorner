@@ -3,27 +3,24 @@ import React, { useState, useEffect, useRef } from "react";
 import { DataGrid } from '@mui/x-data-grid';
 import axios from "axios";
 import { Button, TableContainer, Card, CardContent, Typography, CardActions, Stack, Grid, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
-Table, TableHead, TableRow, TableCell, TableBody, TablePagination } from "@mui/material";
+ } from "@mui/material";
 import { useSelector } from "react-redux";
 import CircularProgress from '@mui/material/CircularProgress';
 import { useNavigate } from "react-router-dom";
-import Chip from '@mui/material/Chip';
 import { deepOrange, green, purple, blue } from '@mui/material/colors';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { toast } from "react-toastify";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import FileCopyIcon from '@mui/icons-material/ContentCopy';
+import Cookies from 'js-cookie';
 import AddLinkIcon from '@mui/icons-material/AddLink';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import dayjs from 'dayjs';
-import Cookies from 'js-cookie';
 import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(utc);
-dayjs.extend(timezone);
+
 
 
 
@@ -54,6 +51,7 @@ export default function LinksCard() {
 
   const navigate = useNavigate();
   const user = useSelector((state) => state.brandUser);
+
   const [paginationModel, setPaginationModel] = React.useState({
     page: 0,
     pageSize: 10,
@@ -70,13 +68,13 @@ export default function LinksCard() {
   const [selectedRows, setSelectedRows] = useState([]);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
-
+  const [ authorized, setAuthorized] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const containerRef = useRef(null);
 
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-  const baseUrl = "http://localhost:8000/api";
+  // const baseUrl = "http://localhost:8000/api";
 
 
 
@@ -134,73 +132,80 @@ export default function LinksCard() {
     // window.open(pdfUrl, "_blank");
 };
 
+const fetchDataFromServer = async (page, pageSize) => {
 
-
-const fetchDataFromServer = async (paginationModel) => {
   try {
 
-
-    const token = Cookies.get('exoticToken');
+    const token = Cookies.get('billsBookToken');
     const response = await axios.post("/api/brand/all-invoices", 
-    { brand_id: user.brand_id, page: paginationModel.page, pageSize: paginationModel.pageSize },
-    // {
-    //   headers: {
-    //     Authorization: `Bearer ${token}`
-    //   }
-    // }
-  );
-    const { data, totalRowCount } = response.data;
+    { brand_id: user.brand_id, page: page, pageSize: pageSize },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if(response.data){
+
+      const { data, totalRowCount } = response.data;
     setRowCountState(totalRowCount || 0);
     setHasMore(data.length > 0);
-    setLoading(false);
-
+    setAuthorized(true);
+    setIsLoading(false);
     return { rows: data, pageInfo: { totalRowCount } };
+
+    }
+
+    else{
+      
+      setAuthorized(false);
+      setIsLoading(false);
+      toast.error('Session expired. Please login again.'); // Display toast notification
+      setTimeout(() => {
+        navigate('/login/brand');
+          
+        }, 1500);
+      return { rows: [], pageInfo: { totalRowCount: 0 } };
+
+    }
+    
+
   } catch (error) {
+
+    setAuthorized(false);
+    setIsLoading(false);
     toast.error('Session expired. Please login again.'); // Display toast notification
     setTimeout(() => {
       navigate('/login/brand');
         
-      }, 2500);
+      }, 1500);
     return { rows: [], pageInfo: { totalRowCount: 0 } };
   }
 };
-
-const fetchDataFromServerForSmallScreen = async (page, pageSize) => {
-  try {
-
-    const token = Cookies.get('exoticToken'); // Retrieve the token from cookies
-    const response = await axios.post("/api/brand/all-invoices", { userId: user.brand_id, page:page, pageSize:pageSize },
-    // {
-    //   headers: {
-    //     Authorization: `Bearer ${token}`
-    //   }
-    // }
-  );
-    const { data, totalRowCount } = response.data;
-    setRowCountState(totalRowCount || 0);
-    setHasMore(data.length > 0);
-    setLoading(false);
-
-    return { rows: data, pageInfo: { totalRowCount } };
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    return { rows: [], pageInfo: { totalRowCount: 0 } };
-  }
-};
-
-
 
 
 const fetchData = async () => {
   setIsLoading(true);
   try {
-    const { rows: fetchedRows, pageInfo } = await fetchDataFromServer(paginationModel);
+
+    if(isSmallScreen){
+
+      const { rows: fetchedRows, pageInfo } = await fetchDataFromServer(page, pageSize);
+      setRows(fetchedRows);
+      setRowCountState(pageInfo.totalRowCount || 0);
+
+    }
+    
+    else{
+    const { rows: fetchedRows, pageInfo } = await fetchDataFromServer(paginationModel.page, paginationModel.pageSize);
     setRows(fetchedRows);
     setRowCountState(pageInfo.totalRowCount || 0);
+    }
+
   } catch (error) {
+    console.log('error:::', error);
     setRows([]);
     setRowCountState(0);
-
     setIsLoading(false);
     toast.warning("Server is busy, try again later.");
   } finally {
@@ -208,27 +213,13 @@ const fetchData = async () => {
   }
 };
 
-const fetchDataForSmallScreen = async () => {
-  setIsLoading(true);
-  try {
-    const { rows: fetchedRows, pageInfo } = await fetchDataFromServerForSmallScreen(page, pageSize);
-    setRows(fetchedRows);
-    setRowCountState(pageInfo.totalRowCount || 0);
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    setRows([]);
-    setRowCountState(0);
-  } finally {
-    setIsLoading(false);
-  }
-};
 
 const loadMoreData = async () => {
   setIsLoading(true);
   try {
 
       const nextPage = page + 1;
-      const { rows: fetchedRows } = await fetchDataFromServerForSmallScreen(nextPage, pageSize);
+      const { rows: fetchedRows } = await fetchDataFromServer(nextPage, pageSize);
       setRows(prevRows => [...prevRows, ...fetchedRows]);
       
 
@@ -247,22 +238,68 @@ const loadMoreData = async () => {
   
   useEffect(() => {
 
-    if(!user.brand_id){
-      navigate("/");
-
-    }
-
-    // else if(user.brand_id && isSmallScreen){
-    //   fetchDataForSmallScreen();
-    
-    // }
-    else if(user.brand_id){
       fetchData();
 
-    }
   }, [paginationModel]);
 
 
+
+  const createCampaign = async (e) => {
+    e.preventDefault();
+
+    try {
+
+        setLoading(true);
+
+          axios.post("/api/brand/check-kyc-status", {
+          userId: user.brand_id,
+        }).then((ress) => {
+
+          if(ress.data.approved){
+
+            axios.post("/api/brand/get-brand-products", {
+              userId: user.brand_id,
+            }).then((ress) => {
+    
+              if(ress.data.data.length !== 0){
+    
+          setLoading(false);
+          navigate("/brand/createInvoice");
+    
+              }
+    
+              else{
+                setLoading(false);
+                handleClickOpenProd();
+                
+              }
+            })
+            .catch((error) => {
+              toast.error("Server Error. Please try again later.");
+            });
+
+          }
+
+          else{
+            setLoading(false);
+            handleClickOpen();
+            
+          }
+        })
+        .catch((e) => {
+          toast.error("Server Error. Please try again later.");
+         
+        });
+  
+  
+      } catch (error) {
+        toast.error("Server Error. Please try again later.");
+       
+      }
+
+
+
+  };
 
   
 
@@ -279,9 +316,7 @@ const loadMoreData = async () => {
       headerName: 'Created Date', 
       width: 160,
       renderCell: (params) => {
-        // const formattedDateTime = dayjs.utc(params.value).locale('en').format('DD-MM-YYYY');
-        const formattedDateTime = dayjs(params.value).tz('Asia/Kolkata').locale('en').format('DD-MM-YYYY');
-
+        const formattedDateTime = dayjs.utc(params.value).locale('en').format('DD-MM-YYYY');
     
         return (
           <div>
@@ -374,9 +409,19 @@ const loadMoreData = async () => {
 <ThemeProvider theme={theme}>
 
 
-{isSmallScreen ? 
+{isSmallScreen && authorized ? 
 
 ( <Grid sx={{ paddingX : '6px', paddingBottom : '22px'}}>
+
+  <Button
+  startIcon = { < AddLinkIcon />}
+  variant="outlined"
+  color="primary"
+  onClick={createCampaign}
+  sx={{ marginTop: "14px", marginBottom : '16px', color: deepOrange[500], cursor: 'pointer', textDecoration: 'none', textTransform: 'none'}}
+  >
+  Create Invoice
+  </Button>
 
 
   {isLoading ? ( <CircularProgress
@@ -495,6 +540,7 @@ const loadMoreData = async () => {
       </Button>
       </div>
       ) }
+
       </>
       ) : (
       <div
@@ -507,7 +553,7 @@ const loadMoreData = async () => {
     }}
   >
     <ReceiptIcon style={{ fontSize: '60px', marginBottom: '20px', color: '#5D12D2'}}/>
-    <div> Make your first order</div>
+    <div> Create your first Invoice</div>
   </div>
       )}
       </>)}
@@ -518,8 +564,19 @@ const loadMoreData = async () => {
 
     <>
 
+<Button
+startIcon = { < AddLinkIcon />}
+variant="outlined"
+color="primary"
+onClick={ createCampaign}
+sx={{ marginBottom: "14px", color: deepOrange[500],  cursor: 'pointer',
+textDecoration: 'none',
+textTransform: 'none' }}
+>
+Create Invoice
+</Button>
 
-<TableContainer sx={{ width : '90%', height : '100vh'}}>
+<TableContainer sx={{ width : '90%', height: '100vh'}}>
 
 {isLoading ? ( <CircularProgress
                   size={24}
@@ -532,41 +589,36 @@ const loadMoreData = async () => {
                   }}
                 />) : (
                   <>
-                 
-                  {rows !== null && rows.length !== 0  ? ( 
+
+{rows !== null && rows.length !== 0  ? ( 
 
 
-<DataGrid
- autoHeight
-  rows={rows}
-  columns={columns}
-  loading={isLoading}
-  rowCount={rowCountState}
-  paginationModel={paginationModel}
-  paginationMode="server"
-  pageSizeOptions={[5]}
-  onPaginationModelChange={setPaginationModel}
-/>) : (
- <div
-style={{
-display: "flex",
-flexDirection: "column",
-alignItems: "center",
-justifyContent: "center",
-height: "50vh", // Adjust the height as needed
-}}
->
-<ReceiptIcon style={{ fontSize: '60px', marginBottom: '20px', color: '#5D12D2'}}/>
-<div> Make your first order</div>
-</div>)
+      <DataGrid
+       autoHeight
+        rows={rows}
+        columns={columns}
+        loading={isLoading}
+        rowCount={rowCountState}
+        paginationModel={paginationModel}
+        paginationMode="server"
+        pageSizeOptions={[5]}
+        onPaginationModelChange={setPaginationModel}
+      />) : (
+       <div
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      height: "50vh", // Adjust the height as needed
+    }}
+  >
+    <ReceiptIcon style={{ fontSize: '60px', marginBottom: '20px', color: '#5D12D2'}}/>
+    <div> Create your first Invoice</div>
+  </div>)
+      }
+      </>)
 }
-</>
-             
-                )
-              } 
-
-
-
 
     </TableContainer>
     </>

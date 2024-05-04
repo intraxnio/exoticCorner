@@ -31,7 +31,7 @@ export default function SupportPage() {
   return (
     <>
 
-    <Grid container justifyContent="center" spacing={4} sx={{marginTop: 5}}>
+    <Grid container justifyContent="center" spacing={4} sx={{marginBottom: 7}}>
       <Grid item xs={12} sm={6} md={4}>
         <Card variant="outlined">
           <CardContent>
@@ -48,19 +48,19 @@ export default function SupportPage() {
               </ListItem>
               <ListItem>
                 <CheckIcon color="primary" />
-                &nbsp;&nbsp; Outlet Setup
+                &nbsp;&nbsp; Account Setup
               </ListItem>
               <ListItem>
                 <CheckIcon color="primary" />
-                &nbsp;&nbsp; Payment Reconciliation
+                &nbsp;&nbsp; Inventory Setup
               </ListItem>
               <ListItem>
                 <CheckIcon color="primary" />
-                &nbsp;&nbsp; Delivery Tracking
+                &nbsp;&nbsp; Bugs Resolution
               </ListItem>
               <ListItem>
                 <CheckIcon color="primary" />
-                &nbsp;&nbsp; On-demand Invoices (PDF)
+                &nbsp;&nbsp; On-demand Reports (PDF)
               </ListItem>
              
             </List>
@@ -77,7 +77,7 @@ export default function SupportPage() {
               startIcon={<MailOutlineIcon />}
               style={{marginLeft: '16px', textTransform: 'lowercase'}}
             >
-              support@exoticcorner.in
+              support@billsbook.cloud
             </Button>
           </CardActions>
         </Card>
@@ -104,15 +104,15 @@ export default function SupportPage() {
               </ListItem>
               <ListItem>
                 <CheckIcon color="primary" />
-                &nbsp;&nbsp; Outlet Setup
+                &nbsp;&nbsp; Account Setup
               </ListItem>
               <ListItem>
                 <CheckIcon color="primary" />
-                &nbsp;&nbsp; Payment Reconciliation
+                &nbsp;&nbsp; Inventory Setup
               </ListItem>
               <ListItem>
                 <CheckIcon color="primary" />
-                &nbsp;&nbsp; On-demand Invoices (PDF)
+                &nbsp;&nbsp; On-demand Reports (PDF)
               </ListItem>
              
             </List>
@@ -129,7 +129,7 @@ export default function SupportPage() {
               startIcon={<CallIcon />}
               style={{marginLeft: '16px', textTransform: 'lowercase'}}
             >
-              +91 9848128740
+              +91 6305420874
             </Button>
           </CardActions>
         </Card>

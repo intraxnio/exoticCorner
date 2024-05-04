@@ -20,10 +20,6 @@ const Brand_Schema = new Schema({
         required: true
     },
 
-    access_token: {
-        type: String,
-    },
-
     reset_pin:{
         type: Number
 
@@ -34,10 +30,21 @@ const Brand_Schema = new Schema({
         required: true
     },
 
+    address: {
+        type: String,
+    },
+
     gstin: {
         type: String,
     },
 
+    bank_account: {
+        type: String,
+    },
+
+    ifsc: {
+        type: String,
+    },
     
     is_approved: {
         type: Boolean,
@@ -49,16 +56,16 @@ const Brand_Schema = new Schema({
         default: false
     },
 
-    outlet_address: {
-        type: String,
-    },
-
     balance: {
         type: Number
     },
 
     charges: {
         type: Number
+    },
+
+    access_token: {
+        type: String
     },
 
     linked_account_id: {

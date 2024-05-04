@@ -23,14 +23,6 @@ const Invoice_Schema = new Schema({
     type: String
   },
 
-  shop_name : {
-    type: String
-  },
-
-  shop_address : {
-    type: String
-  },
-
   shortUrl : {
     type: String
   },

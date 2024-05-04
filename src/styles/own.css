@@ -114,12 +114,6 @@ font-family: 'Roboto', sans-serif; */
   width: 12rem;
 }
 
-.imageBox {
-
-  padding-left: '220px',
-  
-}
-
 .login-btn-grad:hover {
   background-position: right center;
   /* change the direction of the change here */
@@ -168,6 +162,24 @@ font-family: 'Roboto', sans-serif; */
 
 @media (min-width: 576px) {
 
+
+  .reviews-text{
+
+    font-size: 30px;
+    font-family: "Poppins";
+  
+  }
+
+
+  .faq-text {
+
+    font-family: "Poppins";
+    font-size: 2.5rem;
+    padding-left: 3.5rem;
+    padding-right: 3.5rem;
+    font-weight: 500;
+  
+  }
 
   .txt-1 {
     font-family: "Poppins";
@@ -223,15 +235,12 @@ font-family: 'Roboto', sans-serif; */
     font-weight: 400;
     color: #2f2e2e;
     margin-bottom: 25px;
-    margin-top: 12px;
     line-height: 28px;
-    padding-right: 54px ;
-
   }
 
   .bb-txt-3 {
     font-family: "Poppins";
-    font-size: 1rem;
+    font-size: 1.2rem;
     font-weight: 400;
     color: #2f2e2e;
   }
@@ -545,6 +554,24 @@ font-family: 'Roboto', sans-serif; */
 
 /* Mobile Device*/
 @media (max-width: 576px) {
+
+
+
+  .reviews-text{
+
+    font-size: 22px;
+    font-family: "Poppins";
+  
+  }
+
+  
+  .faq-text {
+
+    font-family: "Poppins";
+    font-size: 1.5rem;
+    font-weight: 500;
+  
+  }
 
   .card-headings {
     font-size: 16px;
@@ -1153,9 +1180,9 @@ font-family: 'Roboto', sans-serif; */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f09433', endColorstr='#bc1888',GradientType=1 );
   color: white; */
 
-  background: #009f4a;  /* fallback for old browsers */
-  background: -webkit-linear-gradient(to bottom, #009f4a, #009f4a);  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to bottom, #009f4a, #009f4a); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: #5D26C1;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to bottom, #5D26C1, #a17fe0);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to bottom, #5D26C1, #a17fe0); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   
 }
 

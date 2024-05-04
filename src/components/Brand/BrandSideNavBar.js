@@ -21,8 +21,7 @@ import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import LanguageIcon from '@mui/icons-material/Language';
 import CodeIcon from '@mui/icons-material/Code';
 import PersonIcon from '@mui/icons-material/Person';
-import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
-import ReceiptIcon from '@mui/icons-material/Receipt';
+import InsertLinkIcon from '@mui/icons-material/InsertLink';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -64,7 +63,39 @@ const ResponsiveDrawer = (props) => {
 
       <List>
 
-      <ListItem key="Products" disablePadding style={{ marginBottom : '4px'}}>
+        <ListItem key="Dashboard" disablePadding style={{ marginBottom : '4px'}}>
+          <Link
+            style={{ textDecoration: "none", color: "black" }}
+            to="/brand/dashboard"
+            onClick={handleDrawerToggle}
+          >
+            <ListItemButton>
+              <ListItemIcon>
+                <InsertLinkIcon sx={{ color: deepOrange[500] }}/>
+              </ListItemIcon>
+              <ListItemText primary="Dashboard" />
+            </ListItemButton>
+          </Link>
+        </ListItem>
+
+        <ListItem key="Invoices" disablePadding style={{ marginBottom : '4px'}}>
+          <Link
+            style={{ textDecoration: "none", color: "black" }}
+            to="/brand/invoices"
+            onClick={handleDrawerToggle}
+
+          >
+            <ListItemButton>
+              <ListItemIcon>
+                <LanguageIcon sx={{ color: blue[500] }}/>
+              </ListItemIcon>
+              <ListItemText primary="Invoices" />
+            </ListItemButton>
+          </Link>
+        </ListItem>
+
+
+        <ListItem key="Products" disablePadding style={{ marginBottom : '4px'}}>
           <Link
             style={{ textDecoration: "none", color: "black" }}
             to="/brand/products"
@@ -79,39 +110,6 @@ const ResponsiveDrawer = (props) => {
             </ListItemButton>
           </Link>
         </ListItem>
-
-        <ListItem key="Orders" disablePadding style={{ marginBottom : '4px'}}>
-          <Link
-            style={{ textDecoration: "none", color: "black" }}
-            to="/brand/invoices"
-            onClick={handleDrawerToggle}
-
-          >
-            <ListItemButton>
-              <ListItemIcon>
-                <ReceiptIcon sx={{ color: blue[500] }}/>
-              </ListItemIcon>
-              <ListItemText primary="Orders" />
-            </ListItemButton>
-          </Link>
-        </ListItem>
-
-        <ListItem key="Cart" disablePadding style={{ marginBottom : '4px'}}>
-          <Link
-            style={{ textDecoration: "none", color: "black" }}
-            to="/brand/cart"
-            onClick={handleDrawerToggle}
-
-          >
-            <ListItemButton>
-              <ListItemIcon>
-                <ShoppingCartOutlinedIcon sx={{ color: blue[500] }}/>
-              </ListItemIcon>
-              <ListItemText primary="Cart" />
-            </ListItemButton>
-          </Link>
-        </ListItem>
-        
 
         <ListItem key="Profile" disablePadding>
           <Link

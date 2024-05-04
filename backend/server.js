@@ -19,8 +19,6 @@ process.on("uncaughtException", (err) => {
   console.log(`shutting down the server for handling uncaught exception`);
 });
 
-
-
 const corsOptions = {
   origin: '*',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -46,8 +44,7 @@ app.use("/brand", brand);
 
 
 //create server
-const server = app.listen(8009, () => {
-  console.log('Server is running on http://localhost:8009');
+const server = app.listen(8003, () => {
 });
 
 //unhandled promise rejection

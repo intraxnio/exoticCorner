@@ -4,25 +4,21 @@ const Schema = mongoose.Schema;
 const Products_Schema = new Schema({
 
 
+  brandUser_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "brands",
+  },
 
   product_name: {
     type: String,
   },
 
-  price: {
+  unit_price: {
     type: Number,
   },
 
-  min_order: {
-    type: Number,
-  },
-
-  units: {
+  unit_type: {
     type: String,
-  },
-
-  product_image: {
-    type: String
   },
 
   is_del: {

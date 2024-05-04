@@ -16,13 +16,13 @@ You may contact us using the information below:
 
 
 <p>
-Exotic Corner
+Billsbook
 <br /><br />
 
-Registered Address: ForestKisan Organic Products, Flat No 102, House No: 7-1-681/MIG, Sai Orchids Apt, Serilingampally, Rangareddy, Hyderabad, Telangana - 500019 <br />
-Operational Address: ForestKisan Organic Products, Flat No 102, House No: 7-1-681/MIG, Sai Orchids Apt, Serilingampally, Rangareddy, Hyderabad, Telangana - 500019 <br />
+Registered Address: Linckone Enterprises, Plot no - 20, 2nd Floor, Beside Lucid Diagnostics, Kukatpally, Hyderabad TELANGANA 500072 <br />
+Operational Address: Linckone Enterprises, Plot no - 20, 2nd Floor, Beside Lucid Diagnostics, Kukatpally, Hyderabad TELANGANA 500072 <br />
 
-E-Mail ID: support@exoticcorner.in
+E-Mail ID: support@billsbook.cloud
         </p>
     </div>
 

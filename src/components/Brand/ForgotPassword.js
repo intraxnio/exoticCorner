@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { Box, TextField, Button, Typography, Link, Grid, Rating, Avatar, Stack, ClickAwayListener, Dialog, DialogTitle, DialogContent, DialogActions} from "@mui/material";
+import { Box, TextField, Button, Typography, Grid, ClickAwayListener, Dialog, DialogTitle, DialogContent, DialogActions} from "@mui/material";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -18,7 +18,7 @@ function ForgotPassword() {
   const [loading, setLoading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogForPassword, setDialogForPassword] = useState(false);
-  const baseUrl = "http://localhost:8000/api";
+//   const baseUrl = "http://localhost:8000/api";
 
 
 

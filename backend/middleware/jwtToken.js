@@ -1,8 +1,6 @@
 const {sign, verify} = require("jsonwebtoken");
 const Brand = require('../models/Brand');
 var jwt = require("jsonwebtoken");
-const jwtSecretKey = 'cdjbcHBDHBCHBiBibCHdbibHBDibibib3ib3ijb1ib4b5b6ob67b7cd0v8vf8v98786fdgdg';
-
 
 
 
@@ -11,33 +9,35 @@ const jwtSecretKey = 'cdjbcHBDHBCHBiBibCHdbibHBDibibib3ib3ijb1ib4b5b6ob67b7cd0v8
     
 
 
+
 const createToken = async (user, res) =>{
 
 
-// const token = sign({id: user._id, email: user.email}, `${process.env.JWT_SECRET_KEY}`, {expiresIn: '1d'});
-const token = sign({id: user._id, email: user.email}, jwtSecretKey, {expiresIn: '1d'});
-// logger.customerLogger.log('info', `${process.env.JWT_SECRET_KEY}`);
+  // const token = sign({id: user._id, email: user.email}, `${process.env.JWT_SECRET_KEY}`, {expiresIn: '1d'});
+const token = sign({id: user._id, email: user.email}, `${process.env.JWT_SECRET_KEY}`, {expiresIn: '1d'});
 
-const options = {
-  expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
-  sameSite: "none",
-  secure: true,
-};
-
-const brandObj = { 'brand_id': user._id, 'brand_name': user.brand_name, 'brand_category': user.category };
-
-await Brand.findByIdAndUpdate(user._id,
-  { $set: { 
-    access_token: token } },
-  { new: true }
-);
-
-res.status(201).cookie('exoticToken', token, options).json({
-  token,
-  brandObj,
-});
-
-}
+  // logger.customerLogger.log('info', `${process.env.JWT_SECRET_KEY}`);
+  
+  const options = {
+    expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+    sameSite: "none",
+    secure: true,
+  };
+  
+  const brandObj = { 'brand_id': user._id, 'brand_name': user.brand_name };
+  
+  await Brand.findByIdAndUpdate(user._id,
+    { $set: { 
+      access_token: token } },
+    { new: true }
+  );
+  
+  res.status(201).cookie('billsBookToken', token, options).json({
+    token,
+    brandObj,
+  });
+  
+  }
 
 
 
