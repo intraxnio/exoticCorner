@@ -35,7 +35,7 @@ const s3 = new S3Client({
     accessKeyId: process.env.AWS_ACCESS_KEY,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   },
-  region: 'ap-east-1',
+  region: 'us-east-1',
 });
 
 const razorpayKey = process.env.RZP_KEY;
