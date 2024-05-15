@@ -90,16 +90,6 @@ function Pricing() {
   <p>Reports (PDF)</p>
 </div>
 
-{/* <div className="bb-txt-3 cussLine">
-<span class="material-icons me-3">search</span>
-  <p>GSTIN Search</p><span style={{ fontSize: '12px', paddingTop : '5px', paddingLeft: '4px'}}>(coming soon)</span>
-</div>
-
-<div className="bb-txt-3 cussLine">
-<span class="material-icons me-3">receipt</span>
-  <p>e-invoice upload</p><span style={{ fontSize: '12px', paddingTop : '5px', paddingLeft: '4px'}}>(coming soon)</span>
-</div> */}
-
 </div>
             <div className="container my-4 mx-auto d-flex justify-content-center">
               <button className="btn login-btn-grad btn-g-fonts text-white" onClick={redirectToSignup} >Get Started</button>

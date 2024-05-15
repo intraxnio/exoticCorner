@@ -20,8 +20,17 @@ const Brand_Schema = new Schema({
         required: true
     },
 
+    access_token: {
+        type: String,
+    },
+
     reset_pin:{
         type: Number
+
+    },
+
+    contact_num:{
+        type: String
 
     },
 
@@ -51,6 +60,10 @@ const Brand_Schema = new Schema({
         default: false
     },
 
+    virtual_acc_id: {
+        type: String,
+    },
+
     route_enabled: {
         type: Boolean,
         default: false
@@ -62,10 +75,6 @@ const Brand_Schema = new Schema({
 
     charges: {
         type: Number
-    },
-
-    access_token: {
-        type: String
     },
 
     linked_account_id: {

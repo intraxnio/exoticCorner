@@ -17,7 +17,7 @@ function PaymentVerification() {
   const [paymentRes, setPaymentRes] = useState("");
 
 
-  // const baseUrl = "http://localhost:8000/api";
+  const baseUrl = "http://localhost:8000/api";
 
   const fetchData = async (razorpay_payment_id, razorpay_payment_link_id, razorpay_payment_link_reference_id,
     razorpay_payment_link_status, razorpay_signature) => {
@@ -25,7 +25,7 @@ function PaymentVerification() {
 
       setLoading(true);
 
-      await axios.post("/api/brand/verifyPayment",
+      await axios.post(baseUrl + "/brand/verifyPayment",
         {
             razorpay_payment_id : razorpay_payment_id,
             razorpay_payment_link_id : razorpay_payment_link_id,

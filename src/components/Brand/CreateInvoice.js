@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { toast } from "react-toastify";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
+  Stack,
   Box,
   Grid,
   TextField,
@@ -15,18 +16,29 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Accordion,
+  AccordionSummary,
   FormControl,
 InputLabel,
 Select,
 MenuItem,
-  Paper, Alert, AlertTitle,
+  Paper, AccordionDetails, DialogActions, DialogContent, Typography, Alert, AlertTitle, RadioGroup,
+  FormControlLabel,
+  Radio
 } from "@mui/material";
 import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 import axios from "axios";
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import CircularProgress from '@mui/material/CircularProgress';
+import { ClickAwayListener } from "@mui/base/ClickAwayListener";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import useTheme from '@mui/system/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
+
+
+
+// import dayjs from 'dayjs';
+// import samplePost from '../../images/IMG_2533.jpg'
 
 
 function CreateInvoice() {
@@ -45,7 +57,7 @@ function CreateInvoice() {
   const [totalAmount, setTotalAmount] = useState(0);
   const user = useSelector((state) => state.brandUser);
   const [showAlert, setShowAlert] = useState(false);
-  // const baseUrl = "http://localhost:8000/api";
+  const baseUrl = "http://localhost:8000/api";
   const [errorMessage, setErrorMessage] = useState("");
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -56,25 +68,15 @@ function CreateInvoice() {
   const getBrandProducts = (async () => {
 
     try {
-      axios.post("/api/brand/get-brand-products", { userId : user.brand_id}).then(catResult => {
+      axios.post(baseUrl + "/brand/get-brand-products", { userId : user.brand_id}).then(catResult => {
   
         setProducts(catResult.data.data);
   
       }).catch(er => {
-        if (er.response && er.response.data.error === "All fields are mandatory") {
-          toast.warning("All fields are mandatory");
-        } 
+        // Handle error
       });
     } catch (error) {
-
-      if (error.response && error.response.data.error === "Internal server error") {
-        toast.warning("Internal server error, try again later.");
-      } 
-
-      else{
-        toast.warning("Server is busy, try again later.");
-
-      }
+      console.error(error);
     }
   });
 
@@ -115,20 +117,21 @@ function CreateInvoice() {
       setSelectedProducts(updatedProducts);
     }
   };
-
-  const getTotalPrice = (product) => {
-    return product.unit_price * product.quantity;
-  };
+  
 
   const handleChange = (e) => {
     const inputValue = e.target.value;
     setPayeeMobile(inputValue);
 
     if (inputValue.length !== 10) {
-      setErrorMessage('Required 10-digit mobile number');
+      setErrorMessage('Please enter a 10-digit mobile number');
     } else {
       setErrorMessage('');
     }
+  };
+
+  const getTotalPrice = (product) => {
+    return product.unit_price * product.quantity;
   };
 
 
@@ -143,6 +146,7 @@ function CreateInvoice() {
 
     const mobileRegex = /^\d{1,10}$/;
 
+
     if(!payeeName || !payeeMobile || !selectedProducts){
         toast.warning("Enter All Details");
       }
@@ -155,7 +159,7 @@ function CreateInvoice() {
 
         setLoading(true);
 
-        await axios.post("/api/brand/create-new-invoice",
+        await axios.post(baseUrl + "/brand/create-new-invoice",
         { brand_id : user.brand_id, payeeName: payeeName, payeeMobile : payeeMobile, payeeEmail : payeeEmail, payeeGst : buyerGst, totalAmount : totalAmount, selectedProducts : selectedProducts })
       .then((res) => {
 
@@ -193,7 +197,7 @@ function CreateInvoice() {
 
   return (
     <>
-   <Button startIcon={<KeyboardBackspaceIcon />} onClick={() => handleBackClick()}>Back</Button>
+   <Button startIcon={<KeyboardBackspaceIcon />} onClick={handleBackClick}>Back</Button>
 
         <Grid container sx={{ paddingBottom : '60px', overflowY: 'auto'}}>
 
@@ -215,11 +219,11 @@ function CreateInvoice() {
                         }}
                         margin="normal"
                         variant="outlined"
-                        label="Business Name"
+                        label="Payee Name"
                         InputLabelProps={{
                           shrink: true, // Always show the label above the input
                         }}
-                         placeholder="Buyer Business Name"
+                         placeholder="Payee Name"
                       ></TextField>
 
                     <TextField
@@ -232,13 +236,14 @@ function CreateInvoice() {
                         onChange={handleChange}
                         margin="normal"
                         variant="outlined"
-                        label="Buyer Mobile"
+                        label="Payee Mobile"
                         InputLabelProps={{
                           shrink: true, // Always show the label above the input
                         }}
-                         placeholder="Buyer Mobile"
-                         inputProps={{ inputMode: 'numeric', maxLength: 10 }}
+                         placeholder="Payee Mobile"
+                         inputProps={{ inputMode: 'numeric' }}
                       ></TextField>
+
                       {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
 
                       <TextField
@@ -250,7 +255,7 @@ function CreateInvoice() {
                         }}
                         margin="normal"
                         variant="outlined"
-                        label="Buyer Email"
+                        label="Payee Email"
                         InputLabelProps={{
                           shrink: true, // Always show the label above the input
                         }}
@@ -274,7 +279,7 @@ function CreateInvoice() {
                       ></TextField>
 
 <FormControl variant="outlined" fullWidth>
-          <InputLabel id="product-select-label">Select Product(s)</InputLabel>
+          <InputLabel id="product-select-label">Select Product</InputLabel>
           <Select
             labelId="product-select-label"
             id="product-select"

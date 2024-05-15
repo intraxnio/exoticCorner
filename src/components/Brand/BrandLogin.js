@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { Box, TextField, Button, Typography, Link, Grid } from "@mui/material";
+import { Box, TextField, Button, Typography, Link, Grid, Rating, Avatar, Stack } from "@mui/material";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useDispatch} from 'react-redux';
@@ -27,7 +27,8 @@ function BrandLogin() {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
-  // const baseUrl = "http://localhost:8000/api";
+  const baseUrl = "http://localhost:8000/api";
+
 
 
   
@@ -36,13 +37,13 @@ function BrandLogin() {
 
       setIsLoading(true);
 
-      const token = Cookies.get('bookkeeprToken'); // Retrieve the token from cookies
+      const token = Cookies.get('billsBookToken'); // Retrieve the token from cookies
 
       if(user.brand_id && token)
       {
 
         await axios.post(
-          "/api/brand/check-user-token",
+          baseUrl + "/brand/check-user-token",
           { brand_id: user.brand_id, token : token },
         ).then((tokenResponse) =>{
           
@@ -61,10 +62,12 @@ function BrandLogin() {
         }).catch((err)=>{
           if (err.response && err.response.status === 401) {
             // Handle 401 error (Unauthorized)
+            console.log('check-6');
             toast.error('Session expired. Please login again.'); // Display toast notification
             // navigate('/login/brand');
           } else {
   
+            console.log('check-7');
             toast.error('Server Error. Please login again.'); // Display toast notification
             // navigate('/login/brand');
           }
@@ -81,6 +84,7 @@ function BrandLogin() {
     } catch (error) {
       if (error.response && error.response.status === 401) {
         // Handle 401 error (Unauthorized)
+        console.log('check-8');
         toast.error('Session expired. Please login again.'); // Display toast notification
         // navigate('/login/brand');
       } 
@@ -91,6 +95,7 @@ function BrandLogin() {
   useEffect(() => {
 
     fetchData();
+
 
   }, []);
 
@@ -105,13 +110,13 @@ function BrandLogin() {
 
     else{
       setIsLoading(true);
-
       
-      await axios.post("/api/brand/brand-login",
+      await axios.post(baseUrl + "/brand/brand-login",
         { email: email.toLowerCase(), password: password },
         {withCredentials: true}
       )
       .then((res) => {
+
           const brand_id = res.data.brandObj.brand_id;
           const brand_name = res.data.brandObj.brand_name;
           const brand_category = res.data.brandObj.brand_category;
@@ -123,11 +128,18 @@ function BrandLogin() {
 
       })
       .catch((err) => {
-
         setIsLoading(false);
+
         if (err.response && err.response.data.error === "All fields are mandatory") {
           toast.warning("All fields are mandatory");
         } 
+
+        else if (err.response && err.response.status === 401) {
+          // Handle 401 error (Unauthorized)
+          toast.error('Session expired. Please login again.');
+          console.log('check-5'); // Display toast notification
+          // navigate('/login/brand');
+        }
 
         else if (err.response && err.response.data.error === "User does not exists!") {
           toast.warning("User does not exists");
@@ -177,7 +189,7 @@ function BrandLogin() {
     padding={1}
   >
     <Typography variant="h5" padding={3} textAlign="center">
-      Brand Login
+      Merchant Login
     </Typography>
 
     <TextField
@@ -226,11 +238,12 @@ function BrandLogin() {
 
 
     <Typography variant="body2" sx={{marginTop : '5px'}}>
-                I agree to{" "}
-                <Link href="https://billsbook.cloud/terms-conditions" target="_blank" underline="none" sx={{color: '#362FD9'}}>
-                  BillsBook's Terms of Service
-                </Link>
-              </Typography>
+      I agree to{" "}
+      <Link href="https://www.broadreach.in/terms-conditions" target="_blank" underline="none" sx={{color: '#362FD9'}}>
+        BroadReach's Terms of Service
+      </Link>
+    </Typography>
+
     <Button
       variant="outlined"
       size="large"
@@ -292,11 +305,13 @@ function BrandLogin() {
                     
          
 
-                    <Typography textAlign="start"  sx={{fontSize: '22px', color: 'white', paddingX: '20px', paddingTop: '2%'}}>
-                    .Create <br />
-                    .Send <br />
-                    .Get Paid
-                      </Typography>
+                <Typography textAlign="start"  sx={{fontSize: '22px', color: 'white', paddingX: '20px', paddingTop: '2%'}}>
+
+              
+              .Create <br />
+              .Send <br />
+              .Get Paid
+                </Typography>
 
 
 
@@ -328,7 +343,7 @@ function BrandLogin() {
               padding={1}
             >
               <Typography variant="h5" padding={3} textAlign="center">
-                Brand Login
+                Merchant Login
               </Typography>
 
               <TextField

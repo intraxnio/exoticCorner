@@ -10,11 +10,13 @@ const Brand = require("../models/Brand");
 const TempBrand = require("../models/BrandTemp");
 const Products = require("../models/Products");
 const Invoices = require("../models/Invoices");
+const Beneficiary = require("../models/Beneficiaries");
 const multer = require('multer');
 const Razorpay = require('razorpay');
 const sendMail = require("../utils/sendMail");
 const Queue = require('bull');
 const puppeteer = require('puppeteer');
+var jwt = require("jsonwebtoken");
 const { validatePaymentVerification } = require('razorpay/dist/utils/razorpay-utils');
 const utc = require('dayjs/plugin/utc');
 const timezone = require('dayjs/plugin/timezone');
@@ -32,14 +34,17 @@ const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 
 const s3 = new S3Client({
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    
   },
-  region: 'us-east-1',
+  region: 'us-east-2',
 });
 
-const razorpayKey = process.env.RZP_KEY;
-const razorpaySecret = process.env.RZP_SECRET;
+
+const razorpayKey = 'rzp_test_NNGJdR4Xffi5DP';
+const razorpaySecret = 't7xX4EjcbUdbkU8tTfWyEIpF';
+
+// const razorpayKey = 'rzp_live_WJvHoE0hLYu093';
+// const razorpaySecret = 'U1dHupPIn8NVUU8rsSttX5fU';
 
 const storage = multer.memoryStorage();
 const upload = multer({
@@ -50,12 +55,11 @@ const generatePin = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
+const invoiceQueue = new Queue('invoiceQueue');
+
 const randomInvoiceNumber = () => {
   return Math.floor(10000000 + Math.random() * 90000000).toString().substring(0, 8);
 };
-
-const invoiceQueue = new Queue('invoiceQueue');
-
 
 const verifyToken = (req, res, next) => {
 
@@ -72,22 +76,15 @@ const verifyToken = (req, res, next) => {
   Brand.findById(brand_id).then( async (result)=>{
 
     if(result && token === result.access_token){
-  console.log('token matched');
-
       next();
     }
 
     else{
-  console.log('token NOT matched');
-
       return res.status(401).json({ message: 'Unauthorized: Invalid token' });
 
     }
 
   }).catch((err) =>{
-
-  console.log('token error:', err);
-
 
     return res.status(500).send({
       error: "Internal server error",
@@ -100,45 +97,10 @@ const verifyToken = (req, res, next) => {
 };
 
 
-router.post("/check-user-token", async function (req, res) {
-
-  const { brand_id, token } = req.body;
-  const pin = generatePin();
-
-  Brand.findById(brand_id).then( async (result)=>{
-
-    if(result && token === result.access_token){
-
-    res.status(200).send({ tokenMatches : true});
-    res.end();
-
-    }
-
-    else{
-
-      res.status(200).send({ tokenMatches: false});
-      res.end();
-
-
-    }
-
-  }).catch((err) =>{
-
-    return res.status(500).send({
-      error: "Internal server error",
-      data: null,
-      message: "An error occurred",
-    });
-
-  })
-
-
-});
-
 router.post("/signup-brand", async (req, res, next) => {
 
   try {
-    const { email, password, brand } = req.body;
+    const { email, password, brand, contact} = req.body;
     const hashedPassword = bcrypt.hashSync(password, 10);
     const lowerCaseEmail = email.toLowerCase();
     const pin = generatePin();
@@ -146,7 +108,7 @@ router.post("/signup-brand", async (req, res, next) => {
 
     const options = {
       to: email,
-      subject: "Verify Account - Billsbook",
+      subject: "Verify Account - BroadReach",
       text: `Your 6-digit PIN: ${pin}`,
   }
 
@@ -155,7 +117,7 @@ router.post("/signup-brand", async (req, res, next) => {
     const existingUserInTemp = await TempBrand.findOne({ email : lowerCaseEmail});
 
    
-    if (!lowerCaseEmail || !password || !brand) {
+    if (!lowerCaseEmail || !password || !brand || !contact) {
       return res.status(400).send({
          error: "All fields are mandatory",
          data: null,
@@ -176,6 +138,7 @@ router.post("/signup-brand", async (req, res, next) => {
       existingUserInTemp.password = hashedPassword;
       existingUserInTemp.brand_name = brand;
       existingUserInTemp.reset_pin = pin;
+      existingUserInTemp.contact_num = contact;
       existingUserInTemp.save();
       await sendMail(options);
      return res.status(200).send({ success: true });
@@ -188,6 +151,7 @@ router.post("/signup-brand", async (req, res, next) => {
       email: lowerCaseEmail,
       password: hashedPassword,
       brand_name: brand,
+      contact_num: contact,
       reset_pin : pin
     });
     await sendMail(options);
@@ -202,7 +166,6 @@ router.post("/signup-brand", async (req, res, next) => {
 
 
 router.post("/brand-login", async (req, res, next) => {
-
 
   try {
     const { email, password } = req.body;
@@ -248,6 +211,43 @@ router.post("/brand-login", async (req, res, next) => {
   }
 });
 
+
+router.post("/check-user-token", async function (req, res) {
+
+  const { brand_id, token } = req.body;
+  const pin = generatePin();
+
+  Brand.findById(brand_id).then( async (result)=>{
+
+
+    if(result && token === result.access_token){
+
+    res.status(200).send({ tokenMatches : true});
+    res.end();
+
+    }
+
+    else{
+
+      res.status(200).send({ tokenMatches: false});
+      res.end();
+
+
+    }
+
+  }).catch((err) =>{
+
+    return res.status(500).send({
+      error: "Internal server error",
+      data: null,
+      message: "An error occurred",
+    });
+
+  })
+
+
+});
+
 router.post("/check-email-exists-sendMail", async function (req, res) {
 
   const { email } = req.body;
@@ -260,7 +260,7 @@ router.post("/check-email-exists-sendMail", async function (req, res) {
 
       const options = {
         to: email,
-        subject: "Password Reset PIN - Billsbook",
+        subject: "Password Reset PIN - BillsBook",
         text: `Your 6-digit PIN: ${pin}`,
     }
 
@@ -283,6 +283,12 @@ router.post("/check-email-exists-sendMail", async function (req, res) {
 
   }).catch((err) =>{
 
+    return res.status(500).send({
+      error: "Internal server error",
+      data: null,
+      message: "An error occurred",
+    });
+
   })
 
 
@@ -302,6 +308,7 @@ router.post("/check-resetPin-withDb-brandTemps", async function (req, res) {
         email: lowerCaseEmail,
         password: result.password,
         brand_name: result.brand_name,
+        contact_num: result.contact_num,
         reset_pin : pin,
         balance : 0,
         purchased_plan : '',
@@ -324,6 +331,12 @@ router.post("/check-resetPin-withDb-brandTemps", async function (req, res) {
     }
 
   }).catch((err) =>{
+
+    return res.status(502).send({
+      error: "Internal Server Error",
+      data: null,
+      message: "Internal Server Error",
+    });
 
   })
 
@@ -357,15 +370,45 @@ router.post("/check-resetPin-withDb", async function (req, res) {
 
 });
 
+// router.post("/update-password", async function (req, res) {
 
+//   const { userId, password } = req.body;
+//   const hashedPassword = bcrypt.hashSync(password, 10);
+
+  
+//   Brand.findById(userId).then(async (result)=>{
+
+//     if(result){
+
+//       await Brand.findByIdAndUpdate(result._id, { password: hashedPassword });
+ 
+//   res.status(200).send({ success: true});
+//   res.end();
+
+
+//     }
+
+//     else{
+
+//       res.status(200).send({ success: false});
+//       res.end();
+
+
+//     }
+
+//   }).catch((err) =>{
+
+//   })
+
+// });
 
 router.post("/update-password", async function (req, res) {
 
-  const { userId, password } = req.body;
+  const { email, password } = req.body;
   const hashedPassword = bcrypt.hashSync(password, 10);
 
   
-  Brand.findById(userId).then(async (result)=>{
+  Brand.findOne({email : email}).then(async (result)=>{
 
     if(result){
 
@@ -392,6 +435,131 @@ router.post("/update-password", async function (req, res) {
 });
 
 
+router.post("/update-beneficiaryDetails", async function (req, res) {
+
+  const { brand_id, beneficiary_id, beneficiary_name, beneficiary_mobile, beneficiary_bank_account, beneficiary_ifsc } = req.body;
+
+  
+  await Beneficiary.findOneAndUpdate(
+    { brandUser_id: brand_id, _id : beneficiary_id },
+    { $set: { 
+      beneficiary_name: beneficiary_name, 
+      beneficiary_mobile: beneficiary_mobile, 
+      bank_acc_no : beneficiary_bank_account,
+      ifsc_code : beneficiary_ifsc } 
+    },
+    { new: true }
+  ).then((updatedDetails)=>{
+
+    if(updatedDetails){
+
+ 
+  res.status(200).send({ updated: true});
+  res.end();
+
+    }
+
+    else{
+
+      res.status(200).send({ updated: false});
+      res.end();
+
+
+    }
+
+  }).catch((err) =>{
+
+  })
+
+});
+
+router.post('/delete-beneficiary', async function (req, res){
+
+  const { brand_id, beneficiary_id } = req.body;
+
+
+  await Beneficiary.findOneAndUpdate({ brandUser_id : brand_id, _id : beneficiary_id}, { is_del: true })
+  .then((deletedBeneficiary) => {
+    if (deletedBeneficiary) {
+      // Campaign was found and deleted
+      res.status(200).send({ deleted: true });
+    } else {
+      // Campaign not found
+      res.status(200).send({ deleted: false });
+      
+    }
+  })
+  .catch((err) => {
+    console.error('Error:', err);
+    res.status(500).send({
+      error: 'Deleting Beneficiary failed',
+      data: null,
+      message: 'Oops! Please try again',
+    });
+  });
+
+});
+
+
+router.post("/check-kyc-status", async function (req, res) {
+
+  const { userId } = req.body;
+  
+  Brand.findById(userId).then(async (result)=>{
+
+    if(result && result.is_approved){
+
+ 
+  res.status(200).send({ approved: true});
+  res.end();
+
+
+    }
+
+    else{
+
+      res.status(200).send({ approved: false});
+      res.end();
+
+
+    }
+
+  }).catch((err) =>{
+
+  })
+
+});
+
+router.post("/check-balance", async function (req, res) {
+
+  const { userId } = req.body;
+  
+  Brand.findById(userId).then(async (result)=>{
+
+    if(result){
+
+ 
+  res.status(200).send({ balance: result.balance});
+  res.end();
+
+
+    }
+
+    else{
+
+      res.status(200).send({ balance: 0});
+      res.end();
+
+
+    }
+
+  }).catch((err) =>{
+
+  })
+
+});
+
+
 //below code is for updating password from profile settings page
 
 router.post("/change-password", async function (req, res) {
@@ -406,12 +574,15 @@ router.post("/change-password", async function (req, res) {
       bcrypt.compare(password, result.password, async function (err1, ress) {
         if (ress === true) {
 
+          console.log('Correct Password');
+
           await Brand.findByIdAndUpdate(result._id, { password: hashedPassword });
           res.status(200).send({ success: true});
           res.end();
         
   
         } else {
+          console.log('Wrong Password');
           return res.status(400).send({
             error: "Wrong current password",
             data: null,
@@ -432,38 +603,6 @@ router.post("/change-password", async function (req, res) {
     }
 
   }).catch((err) =>{
-
-  })
-
-});
-
-router.post("/check-kyc-status", async function (req, res) {
-
-  const { userId } = req.body;
-  
-  Brand.findById(userId).then(async (result)=>{
-
-    if(result && result.is_approved){
-
- 
-  res.status(200).send({ approved: true});
-  res.end();
-
-    }
-
-    else{
-      res.status(200).send({ approved: false});
-      res.end();
-
-    }
-
-  }).catch((err) =>{
-
-    return res.status(500).send({
-      error: "Internal server error",
-      data: null,
-      message: "An error occurred",
-    });
 
   })
 
@@ -555,11 +694,7 @@ router.post('/get-brand-products', async function (req, res){
 
   }).catch(e2=>{
 
-    return res.status(500).send({
-      error: "Internal server error",
-      data: null,
-      message: "An error occurred",
-    });
+    console.log('Error2', e2);
 
   })
 });
@@ -635,11 +770,12 @@ router.post("/create-new-invoice", async function (req, res) {
     if(result){
 
       const invoiceNumber = randomInvoiceNumber();
+      
       var instance = new Razorpay({ key_id: razorpayKey, key_secret: razorpaySecret })
 
       try {
         // Create payment link
-        const result = await instance.paymentLink.create({
+        const paymentResult = await instance.paymentLink.create({
           amount: totalAmount * 100,
           currency: "INR",
           accept_partial: false,
@@ -654,7 +790,8 @@ router.post("/create-new-invoice", async function (req, res) {
             email: false
           },
           reminder_enable: true,
-          
+          // callback_url: "https://localhost:4700/verifyPayment",
+          // callback_method: "get"
         });
     
         await Invoices.create({
@@ -667,36 +804,28 @@ router.post("/create-new-invoice", async function (req, res) {
           invoice_pdf_file: '',
           buyer_email: payeeEmail ? payeeEmail : '',
           buyer_gst: payeeGst ? payeeGst : '',
-          shortUrl: result.short_url,
-          payment_link_id: result.id,
-          payment_status: 'created'
+          shortUrl: paymentResult.short_url,
+          payment_link_id: paymentResult.id,
+          payment_status: 'created',
+          route_enabled : result.route_enabled ? true : false,
+          linked_account_id: result.route_enabled ? result.linked_account_id : ''
+
+
         });
+
+        await invoiceQueue.add({ payment_link_id: paymentResult.id });
     
-        await invoiceQueue.add({ payment_link_id: result.id }).then( resss=>{
-
-          res.status(200).send({ invoiceCreated: true});
-          res.end();
-
-        }).catch(e3=>{
-
-          return res.status(500).send({
-            error: "Internal server error",
-            data: null,
-            message: "An error occurred",
-          });
-
-        })
-      
+        res.status(200).send({ invoiceCreated: true});
+        res.end();
       
     
       } catch (error) {
-
+        console.error("Error generating PDF or saving record:", error.error.description);
         return res.status(400).send({
           error: error.error.code,
           data: null,
           message: error.error.description,
         });
-
       }
 
     }
@@ -710,18 +839,61 @@ router.post("/create-new-invoice", async function (req, res) {
 
   }).catch((err) =>{
 
-    return res.status(500).send({
-      error: "Internal server error",
-      data: null,
-      message: "An error occurred",
-    });
+  })
+
+});
+
+router.post("/create-new-beneficiary", async function (req, res) {
+
+  const { brand_id, beneficiaryName, beneficiaryMobile, bankAccountNo, ifscCode } = req.body;
+  
+  Brand.findById(brand_id).then(async (result)=>{
+
+    if(result){
+
+
+      try {
+
+        await Beneficiary.create({
+          brandUser_id: brand_id,
+          beneficiary_name: beneficiaryName,
+          beneficiary_mobile: beneficiaryMobile,
+          bank_acc_no: bankAccountNo,
+          ifsc_code: ifscCode,
+          open_beneficiary_id: '',
+          linked_virtual_acc_id : result.virtual_acc_id,
+
+        });
+
+        res.status(200).send({ beneficiaryCreated: true});
+        res.end();
+      
+    
+      } catch (error) {
+        console.error("Error creating beneficiary:", error.error.description);
+        return res.status(400).send({
+          error: error.error.code,
+          data: null,
+          message: error.error.description,
+        });
+      }
+
+    }
+
+    else{
+
+      res.status(200).send({ beneficiaryCreated: false});
+      res.end();
+
+    }
+
+  }).catch((err) =>{
 
   })
 
 });
 
-
-async function processData(data, index) {
+  async function processData(data, index) {
 
   
   var instance = new Razorpay({ key_id: razorpayKey, key_secret: razorpaySecret, headers: { 'Content-Type': 'application/json' } });
@@ -915,8 +1087,6 @@ return {
         })
         .catch(error => {
             // Handle errors if any
-
-            console.log('processData error:', error);
             return {
                 id: index + 1,
                 invoiceId: data._id,
@@ -947,7 +1117,9 @@ return {
   }
 }
 
+
 router.post('/all-invoices', verifyToken, async (req, res) => {
+
 
   const user_id = req.body.brand_id;
   let { page, pageSize } = req.body;
@@ -955,47 +1127,115 @@ router.post('/all-invoices', verifyToken, async (req, res) => {
 
   try {
 
-    const result = await Invoices.find({ 'brandUser_id' : user_id, is_del : false});
+    const result = await Invoices.find({ 'brandUser_id' : user_id});
     let invoices;
     if (page === 0) {
-      invoices = await Invoices.find({ brandUser_id: user_id, is_del : false })
+      invoices = await Invoices.find({ brandUser_id: user_id })
         .sort({ created_at: -1 }) // Sort by created_at in descending order
         .limit(pageSize).populate('brandUser_id');
 
     } else {
       page = page + 1;
-      invoices = await Invoices.find({ brandUser_id: user_id, is_del : false })
+      invoices = await Invoices.find({ brandUser_id: user_id })
         .sort({ created_at: -1 }) // Sort by created_at in descending order
         .skip((page - 1) * pageSize)
         .limit(pageSize).populate('brandUser_id');
-
-
     }
-
 
   const tableData = await Promise.all(invoices.map(async (data, index) => {
 
     try{
 
-      return await processData(data, index);
+    return await processData(data, index);
+
+    }
+
+    catch (error) {
+      console.error('Error processing data:', error);
+      return {
+        id: index + 1,
+        invoiceId: data._id,
+        payeeName: data.buyer_name,
+        payeeMobile: data.buyer_mobile_number,
+        invoice: data._id,
+        invoiceAmount: data.invoice_amount,
+        paymentStatus: "Error",
+        createdDate: data.created_at,
+      };
+    };
+  
+  }));
+
+  res.status(200).send({ data: tableData, totalRowCount : result.length });
+  res.end();
+
+} catch (error) {
+   
+  return res.status(500).send({
+    error: "Internal server error",
+    data: null,
+    message: "An error occurred",
+  });
+  
+}
 
   
-      }
-  
-      catch (error) {
-        console.error('Error processing data:', error);
-        return {
-          id: index + 1,
-          invoiceId: data._id,
-          payeeName: data.buyer_name,
-          payeeMobile: data.buyer_mobile_number,
-          invoice: data._id,
-          invoiceAmount: data.invoice_amount,
-          paymentStatus: "Error",
-          createdDate: data.created_at,
-        };
+});
+
+router.post('/all-beneficiaries', verifyToken, async (req, res) => {
+
+
+  const user_id = req.body.brand_id;
+  let { page, pageSize } = req.body;
+
+
+  try {
+
+    const result = await Beneficiary.find({ 'brandUser_id' : user_id, is_del : false});
+    let beneficiaries;
+    if (page === 0) {
+      beneficiaries = await Beneficiary.find({ brandUser_id: user_id, is_del : false })
+        .sort({ created_at: -1 }) // Sort by created_at in descending order
+        .limit(pageSize).populate('brandUser_id');
+
+    } else {
+      page = page + 1;
+      beneficiaries = await Beneficiary.find({ brandUser_id: user_id, is_del : false })
+        .sort({ created_at: -1 }) // Sort by created_at in descending order
+        .skip((page - 1) * pageSize)
+        .limit(pageSize).populate('brandUser_id');
+    }
+
+  const tableData = await Promise.all(beneficiaries.map(async (data, index) => {
+
+    try{
+
+      return {
+        id: index + 1,
+        beneficiaryName: data.beneficiary_name,
+        beneficiaryMobile: data.beneficiary_mobile,
+        beneficiaryId: data._id,
+        beneficiaryEdit: data._id,
+        beneficiaryDelete: data._id,
+        bankAccount: data.bank_acc_no,
+        bankIfsc: data.ifsc_code,
       };
-}));
+
+    }
+
+    catch (error) {
+      console.error('Error processing data:', error);
+      return {
+        id: index + 1,
+        beneficiaryName: data.beneficiary_name,
+        beneficiaryMobile: data.beneficiary_mobile,
+        beneficiaryId: data._id,
+        bankAccount: data.bank_acc_no,
+        bankIfsc: data.ifsc_code,
+      };
+    };
+  
+  }));
 
   res.status(200).send({ data: tableData, totalRowCount : result.length });
   res.end();
@@ -1017,7 +1257,32 @@ router.post('/get-total-transactions', async function (req, res){
 
   const user_id = req.body.userId;
 
-  Invoices.find({'brandUser_id': user_id, 'payment_status': 'paid', 'is_del' : false}).then((result)=>{
+  Invoices.find({'brandUser_id': user_id, 'payment_status': 'paid'}).then((result)=>{
+
+    if(result){
+    res.status(200).send({ data: result.length});
+    res.end();
+
+    }
+
+    else{
+    res.status(200).send({ data: 0});
+    res.end();
+
+    }
+
+  }).catch(e2=>{
+
+    console.log('Error2', e2);
+
+  })
+});
+
+router.post('/get-total-transactions-pending', async function (req, res){
+
+  const user_id = req.body.userId;
+
+  Invoices.find({'brandUser_id': user_id, 'payment_status': 'created'}).then((result)=>{
 
     if(result){
     res.status(200).send({ data: result.length});
@@ -1044,7 +1309,40 @@ router.post('/get-total-transactions-amount', async function (req, res){
   const user_id = req.body.userId;
   let totalAmount = 0;
 
-  Invoices.find({'brandUser_id': user_id, 'payment_status': 'paid', 'is_del' : false}).then((result)=>{
+  Invoices.find({'brandUser_id': user_id, 'payment_status': 'paid'}).then((result)=>{
+
+    if(result){
+
+      result.map((details =>{
+
+        totalAmount+= details.invoice_amount;
+
+      }))
+
+    res.status(200).send({ data: totalAmount});
+    res.end();
+
+    }
+
+    else{
+    res.status(200).send({ data: 0});
+    res.end();
+
+    }
+
+  }).catch(e2=>{
+
+    console.log('Error2', e2);
+
+  })
+});
+
+router.post('/get-total-transactions-amount-dues', async function (req, res){
+
+  const user_id = req.body.userId;
+  let totalAmount = 0;
+
+  Invoices.find({'brandUser_id': user_id, 'payment_status': 'created'}).then((result)=>{
 
     if(result){
 
@@ -1088,6 +1386,68 @@ router.post('/get-account-balance', verifyToken, async function (req, res){
 
   })
 });
+
+
+
+
+router.post('/verifyPayment', async (req, res) => {
+
+  const razorpay_payment_id = req.body.razorpay_payment_id;
+  const razorpay_payment_link_id = req.body.razorpay_payment_link_id;
+  const razorpay_payment_link_reference_id = req.body.razorpay_payment_link_reference_id;
+  const razorpay_payment_link_status = req.body.razorpay_payment_link_status;
+  const razorpay_signature = req.body.razorpay_signature;
+
+  const validationResp = validatePaymentVerification({
+    "payment_link_id": razorpay_payment_link_id,
+    "payment_id": razorpay_payment_id,
+    "payment_link_reference_id": razorpay_payment_link_reference_id,
+    "payment_link_status": razorpay_payment_link_status,
+  }, razorpay_signature , razorpaySecret);
+
+
+  if(validationResp){
+
+    try {
+      const resppp = await Invoices.findOneAndUpdate(
+        { payment_link_id: razorpay_payment_link_id },
+        { $set: { is_payment_captured: true } },
+        { new: true }
+      );
+
+      await Brand.findByIdAndUpdate(
+        resppp.brandUser_id,
+        { $inc: { balance: resppp.invoice_amount } },
+        { new: true }
+      );
+
+      await Invoices.findOne({ payment_link_id : razorpay_payment_link_id}).then( forResp => {
+
+        res.status(200).send({ data: forResp});
+        res.end();
+
+      }).catch(e2=>{
+
+        console.log('Error2', e2);
+    
+      })
+
+
+
+    } catch (error) {
+      console.error('Error updating invoice:', error);
+    }
+
+
+  }
+
+  else{
+
+    console.log('else block');
+  }
+
+});
+
 
 router.post('/is-pdf-link-available', async (req, res) => {
   try {
@@ -1239,8 +1599,17 @@ try {
 
 
 
-    async function generateInvoice({ date, invoiceNumber, payeeName, payeeMobile, companyName, companyAddress, companyGSTIN, productDetails, amountToPay }) {
 
+
+
+
+
+
+
+
+  async function generateInvoice({ date, invoiceNumber, payeeName, payeeMobile, companyName, companyAddress, companyGSTIN, productDetails, amountToPay }) {
+
+      console.log('generateInvoice hit');
       return (
         `
         <!DOCTYPE html>

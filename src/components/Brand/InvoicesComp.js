@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { DataGrid } from '@mui/x-data-grid';
 import axios from "axios";
 import { Button, TableContainer, Card, CardContent, Typography, CardActions, Stack, Grid, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
- } from "@mui/material";
+Table, TableHead, TableRow, TableCell, TableBody, TablePagination } from "@mui/material";
 import { useSelector } from "react-redux";
 import CircularProgress from '@mui/material/CircularProgress';
 import { useNavigate } from "react-router-dom";
@@ -12,15 +12,17 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { toast } from "react-toastify";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Cookies from 'js-cookie';
+import FileCopyIcon from '@mui/icons-material/ContentCopy';
 import AddLinkIcon from '@mui/icons-material/AddLink';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import dayjs from 'dayjs';
+import Cookies from 'js-cookie';
 import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(utc);
-
+dayjs.extend(timezone);
 
 
 
@@ -51,7 +53,6 @@ export default function LinksCard() {
 
   const navigate = useNavigate();
   const user = useSelector((state) => state.brandUser);
-
   const [paginationModel, setPaginationModel] = React.useState({
     page: 0,
     pageSize: 10,
@@ -66,15 +67,16 @@ export default function LinksCard() {
   const [open, setOpen] = useState(false);
   const [openProd, setOpenProd] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
+  const [ authorized, setAuthorized] = useState(false);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
-  const [ authorized, setAuthorized] = useState(false);
+
   const [hasMore, setHasMore] = useState(true);
   const containerRef = useRef(null);
 
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-  // const baseUrl = "http://localhost:8000/api";
+  const baseUrl = "http://localhost:8000/api";
 
 
 
@@ -110,7 +112,7 @@ export default function LinksCard() {
 
       setIsLoading(true);
 
-      axios.post("/api/brand/is-pdf-link-available", {
+      axios.post(baseUrl + "/brand/is-pdf-link-available", {
           invoiceId: invoiceId,
         })
         .then((ress) => {
@@ -132,12 +134,15 @@ export default function LinksCard() {
     // window.open(pdfUrl, "_blank");
 };
 
+
+
 const fetchDataFromServer = async (page, pageSize) => {
 
   try {
 
-    const token = Cookies.get('bookkeeprToken');
-    const response = await axios.post("/api/brand/all-invoices", 
+
+    const token = Cookies.get('billsBookToken');
+    const response = await axios.post(baseUrl + "/brand/all-invoices", 
     { brand_id: user.brand_id, page: page, pageSize: pageSize },
     {
       headers: {
@@ -251,13 +256,13 @@ const loadMoreData = async () => {
 
         setLoading(true);
 
-          axios.post("/api/brand/check-kyc-status", {
+          axios.post(baseUrl + "/brand/check-kyc-status", {
           userId: user.brand_id,
         }).then((ress) => {
 
           if(ress.data.approved){
 
-            axios.post("/api/brand/get-brand-products", {
+            axios.post(baseUrl + "/brand/get-brand-products", {
               userId: user.brand_id,
             }).then((ress) => {
     
@@ -316,7 +321,9 @@ const loadMoreData = async () => {
       headerName: 'Created Date', 
       width: 160,
       renderCell: (params) => {
-        const formattedDateTime = dayjs.utc(params.value).locale('en').format('DD-MM-YYYY');
+        // const formattedDateTime = dayjs.utc(params.value).locale('en').format('DD-MM-YYYY');
+        const formattedDateTime = dayjs(params.value).tz('Asia/Kolkata').locale('en').format('DD-MM-YYYY');
+
     
         return (
           <div>
@@ -409,7 +416,7 @@ const loadMoreData = async () => {
 <ThemeProvider theme={theme}>
 
 
-{isSmallScreen && authorized ? 
+{isSmallScreen ? 
 
 ( <Grid sx={{ paddingX : '6px', paddingBottom : '22px'}}>
 
@@ -422,7 +429,6 @@ const loadMoreData = async () => {
   >
   Create Invoice
   </Button>
-
 
   {isLoading ? ( <CircularProgress
                   size={24}
@@ -540,7 +546,6 @@ const loadMoreData = async () => {
       </Button>
       </div>
       ) }
-
       </>
       ) : (
       <div
@@ -576,7 +581,7 @@ textTransform: 'none' }}
 Create Invoice
 </Button>
 
-<TableContainer sx={{ width : '90%', height: '100vh'}}>
+<TableContainer sx={{ width : '90%', height : '100vh'}}>
 
 {isLoading ? ( <CircularProgress
                   size={24}
@@ -589,36 +594,41 @@ Create Invoice
                   }}
                 />) : (
                   <>
+                 
+                  {rows !== null && rows.length !== 0  ? ( 
 
-{rows !== null && rows.length !== 0  ? ( 
 
-
-      <DataGrid
-       autoHeight
-        rows={rows}
-        columns={columns}
-        loading={isLoading}
-        rowCount={rowCountState}
-        paginationModel={paginationModel}
-        paginationMode="server"
-        pageSizeOptions={[5]}
-        onPaginationModelChange={setPaginationModel}
-      />) : (
-       <div
-    style={{
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      height: "50vh", // Adjust the height as needed
-    }}
-  >
-    <ReceiptIcon style={{ fontSize: '60px', marginBottom: '20px', color: '#5D12D2'}}/>
-    <div> Create your first Invoice</div>
-  </div>)
-      }
-      </>)
+<DataGrid
+ autoHeight
+  rows={rows}
+  columns={columns}
+  loading={isLoading}
+  rowCount={rowCountState}
+  paginationModel={paginationModel}
+  paginationMode="server"
+  pageSizeOptions={[5]}
+  onPaginationModelChange={setPaginationModel}
+/>) : (
+ <div
+style={{
+display: "flex",
+flexDirection: "column",
+alignItems: "center",
+justifyContent: "center",
+height: "50vh", // Adjust the height as needed
+}}
+>
+<ReceiptIcon style={{ fontSize: '60px', marginBottom: '20px', color: '#5D12D2'}}/>
+<div> Create your first Invoice</div>
+</div>)
 }
+</>
+             
+                )
+              } 
+
+
+
 
     </TableContainer>
     </>

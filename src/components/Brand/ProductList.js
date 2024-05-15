@@ -10,9 +10,6 @@ import { deepOrange, green, purple, blue } from '@mui/material/colors';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from "react-toastify";
-import InventoryOutlinedIcon from '@mui/icons-material/InventoryOutlined';
-import CircularProgress from '@mui/material/CircularProgress';
-
 
 
 
@@ -39,6 +36,7 @@ const theme = createTheme({
 function ProductList() {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
+  const baseUrl = "http://localhost:8000/api";
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [productName, setProductName] = useState('');
@@ -73,7 +71,7 @@ function ProductList() {
 
     try{
 
-      axios.post("/api/brand/delete-product", {
+      axios.post(baseUrl + "/brand/delete-product", {
         product_id: currentProductId,
       })
       .then((ress) => {
@@ -113,22 +111,15 @@ function ProductList() {
   const getBrandProducts = (async () => {
 
     try {
-
-      setLoading(true);
-      axios.post("/api/brand/get-brand-products", { userId : user.brand_id}).then(catResult => {
+      axios.post(baseUrl + "/brand/get-brand-products", { userId : user.brand_id}).then(catResult => {
   
-        setLoading(false);
         setProducts(catResult.data.data);
   
       }).catch(er => {
-        setLoading(false);
-        toast.warning("Server is busy, try again later.");
+        // Handle error
       });
     } catch (error) {
-
-      setLoading(false);
-      toast.error("Server is busy, try again later.");
-
+      console.error(error);
     }
   });
 
@@ -147,7 +138,7 @@ function ProductList() {
       else {
 
 
-      await axios.post("/api/brand/add-new-product",
+      await axios.post(baseUrl + "/brand/add-new-product",
         { brand_id : user.brand_id, productName: productName, unitPrice : unitPrice, unitType : unitType })
       .then((res) => {
 
@@ -160,17 +151,19 @@ function ProductList() {
             }
             else if(res.data.productAdded){
                 
-                toast.success("Product Added");
+              toast.success("Product Added");
+
                 setLoading(false);
                 setIsDialogOpen(false);
                 getBrandProducts();
+
                
                   }
 
       })
       .catch((err) => {
       
-          toast.error("Server Error. Please try again later.");
+          toast.error("An error occurred. Please try again later.");
       });
 
     }
@@ -196,16 +189,8 @@ function ProductList() {
         textTransform: 'none'
       }} 
       >
-      Add Product
+      New Product
       </Button>
-
-  {loading ? (<CircularProgress />) : (<>
-
-
-{products !== null && products.length !== 0  ? ( 
-
-  <>
-
 
     <Grid container spacing={2} marginTop={2}>
       <Grid item xs={12}>
@@ -237,28 +222,6 @@ function ProductList() {
         </TableContainer>
       </Grid>
     </Grid>
-
-  </>) : (
-
-<div
-style={{
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
-  height: "50vh", // Adjust the height as needed
-}}
->
-<InventoryOutlinedIcon style={{ fontSize: '60px', marginBottom: '20px', color: '#5D12D2'}}/>
-<div> Add products to inventory</div>
-</div>
-
-  )}
-
-  </>)}
-
-
-
 
     {products && (
         <ClickAwayListener onClickAway={handleClickAway}>
@@ -305,10 +268,8 @@ style={{
                 label="Unit Type"
               >
                 <MenuItem value="Kg">Kg</MenuItem>
-                <MenuItem value="Gm">Gms</MenuItem>
-                <MenuItem value="Ton">Ton</MenuItem>
-                <MenuItem value="Ca">Ca</MenuItem>
-                <MenuItem value="Ltr">Ltr</MenuItem>
+                <MenuItem value="Gms">Gms</MenuItem>
+                <MenuItem value="No">No</MenuItem>
               </Select>
 
 

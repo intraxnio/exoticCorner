@@ -19,12 +19,15 @@ import { deepOrange, blue, indigo, green, purple } from '@mui/material/colors';
 import { Outlet} from "react-router-dom";
 import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import LanguageIcon from '@mui/icons-material/Language';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import CodeIcon from '@mui/icons-material/Code';
 import PersonIcon from '@mui/icons-material/Person';
 import InsertLinkIcon from '@mui/icons-material/InsertLink';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import WebStoriesIcon from '@mui/icons-material/WebStories';
+
 
 
 
@@ -58,7 +61,34 @@ const ResponsiveDrawer = (props) => {
 
   const drawer = (
     <div>
-      <Toolbar />
+      <div
+          className="navbar-brand"
+          style={{
+            fontSize: "22px",
+            fontWeight: 500,
+            color: "#803D3B",
+            fontFamily: "Poppins",
+            paddingLeft : '16px',
+            paddingTop : '16px',
+            paddingBottom: '16px'
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            <WebStoriesIcon />
+
+            <div
+              style={{ color: "#803D3B", fontSize: "22px", marginLeft: "08px" }}
+            >
+              bills book
+            </div>
+          </div>
+        </div>
       <Divider />
 
       <List>
@@ -90,6 +120,22 @@ const ResponsiveDrawer = (props) => {
                 <LanguageIcon sx={{ color: blue[500] }}/>
               </ListItemIcon>
               <ListItemText primary="Invoices" />
+            </ListItemButton>
+          </Link>
+        </ListItem>
+
+        <ListItem key="Payouts" disablePadding style={{ marginBottom : '4px'}}>
+          <Link
+            style={{ textDecoration: "none", color: "black" }}
+            to="/brand/payouts"
+            onClick={handleDrawerToggle}
+
+          >
+            <ListItemButton>
+              <ListItemIcon>
+                <AccountBalanceIcon sx={{ color: blue[500] }}/>
+              </ListItemIcon>
+              <ListItemText primary="Payouts" />
             </ListItemButton>
           </Link>
         </ListItem>
@@ -173,7 +219,10 @@ const ResponsiveDrawer = (props) => {
             bottom: 0, // Position at the bottom
           }}
         >
+          
          <Toolbar sx={{ display: 'flex', justifyContent: 'center' }}>
+
+     
           
       <IconButton
         aria-label="open drawer"
