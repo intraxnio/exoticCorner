@@ -20,7 +20,7 @@ export default function LandingPage() {
         {/* <meta content="Reach driven micro-influencer marketing platform for businesses and brands to create campaigns for increased ROI." property="og:description" /> */}
         <meta property="og:type" content="website" />
         <link rel="icon" href="/favicon.ico" />
-        <link rel="canonical" href="https://www.bookkeepr.in" />
+        <link rel="canonical" href="https://www.billsbook.cloud" />
         
       </Helmet> 
 
