@@ -36,7 +36,7 @@ export default function Navbar() {
             <div
               style={{ color: "#803D3B", fontSize: "22px", marginLeft: "08px" }}
             >
-              Book keepr
+              bills book
             </div>
           </div>
         </Link>
