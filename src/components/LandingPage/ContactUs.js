@@ -9,20 +9,19 @@ function supportContact() {
    <Navbar />
   
 
-    <div className="container">
+    <div className="container mt-2">
         <p>
 You may contact us using the information below:
         </p>
 
 
 <p>
-Billsbook
-<br /><br />
+<br />
 
-Registered Address: Linckone Enterprises, Plot no - 20, 2nd Floor, Beside Lucid Diagnostics, Kukatpally, Hyderabad TELANGANA 500072 <br />
-Operational Address: Linckone Enterprises, Plot no - 20, 2nd Floor, Beside Lucid Diagnostics, Kukatpally, Hyderabad TELANGANA 500072 <br />
+Registered Address: Linckone Enterprises, Plot no - 20, 2nd Floor, Beside Lucid Diagnostics, Kukatpally, Hyderabad TELANGANA 500072 <br /><br />
+Operational Address: Linckone Enterprises, Plot no - 20, 2nd Floor, Beside Lucid Diagnostics, Kukatpally, Hyderabad TELANGANA 500072 <br /><br />
 
-E-Mail ID: support@billsbook.online
+E-Mail: support@billsbook.cloud
         </p>
     </div>
 

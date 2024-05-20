@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import WebStoriesIcon from '@mui/icons-material/WebStories';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import DeblurIcon from '@mui/icons-material/Deblur';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -13,7 +11,7 @@ export default function Navbar() {
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light mt-3">
-      <div className="container mb-4">
+      <div className="container">
       
         <Link
           to="/"
@@ -21,7 +19,7 @@ export default function Navbar() {
           style={{
             fontSize: "22px",
             fontWeight: 500,
-            color: "#31304D",
+            color: "#803D3B",
             fontFamily: "Poppins",
           }}
         >
@@ -33,12 +31,12 @@ export default function Navbar() {
             }}
           >
             {/* <div className="material-icons">web_stories</div> */}
-            <DeblurIcon />
+            <WebStoriesIcon />
 
             <div
-              style={{ color: "#31304D", fontSize: "22px", marginLeft: "08px" }}
+              style={{ color: "#803D3B", fontSize: "22px", marginLeft: "08px" }}
             >
-              Pepwalk
+              Book keepr
             </div>
           </div>
         </Link>
@@ -55,27 +53,27 @@ export default function Navbar() {
           <div>
             <ul className="navbar-nav">
               <li>
-                <Link to="/all-sneakers" style={{ textDecoration: "none" }}>
+                <Link to="/invoicing" style={{ textDecoration: "none" }}>
                   <div
                     style={{
                       font : "poppins",
                       fontSize: "17px",
-                      color: "#31304D",
+                      color: "#11009E",
                       marginLeft: "16px",
                       marginRight: "16px",
                       fontWeight : 500
                     }}
                   >
-                    Sneakers
+                    Invoicing
                   </div>
                 </Link>
               </li>
 
               <li>
-                <Link to="/all-watches" style={{ textDecoration: "none" }}>
+                <Link to="/payments" style={{ textDecoration: "none" }}>
                   <div
                     style={{
-                      color: "#31304D",
+                      color: "#11009E",
                       font : "poppins",
                       fontSize: "17px",
                       marginLeft: "16px",
@@ -83,16 +81,16 @@ export default function Navbar() {
                       fontWeight : 500
                     }}
                   >
-                    Watches
+                    Payments
                   </div>
                 </Link>
               </li>
 
               <li>
-                <Link to="/all-bags" style={{ textDecoration: "none" }}>
+                <Link to="/onboarding" style={{ textDecoration: "none" }}>
                   <div
                     style={{
-                      color: "#31304D",
+                      color: "#11009E",
                       font : "poppins",
                       fontSize: "17px",
                       marginLeft: "16px",
@@ -100,19 +98,16 @@ export default function Navbar() {
                       fontWeight : 500
                     }}
                   >
-                    Bags
+                    Onboarding
                   </div>
                 </Link>
               </li>
-
-             
-
 
               <li>
                 <Link to="/pricing" style={{ textDecoration: "none" }}>
                   <div
                     style={{
-                      color: "#31304D",
+                      color: "#11009E",
                       font : "poppins",
                       fontSize: "17px",
                       marginLeft: "16px",
@@ -121,7 +116,7 @@ export default function Navbar() {
 
                     }}
                   >
-                    + Sell
+                    Pricing
                   </div>
                 </Link>
               </li>
@@ -129,10 +124,21 @@ export default function Navbar() {
               <li>
                 <Link
                   to="/support"
-                  style={{ textDecoration: "none", marginLeft : '16px', color : '#31304D' }}
+                  style={{ textDecoration: "none" }}
                 >
-                  
-                  <ShoppingCartIcon />
+                  <div
+                    style={{
+                      color: "#11009E",
+                      font : "poppins",
+                      fontSize: "17px",
+                      marginLeft: "16px",
+                      marginRight: "16px",
+                      fontWeight : 500
+
+                    }}
+                  >
+                    Support
+                  </div>
                 </Link>
               </li>
             </ul>
@@ -197,7 +203,7 @@ export default function Navbar() {
             </li>
 
             <li>
-              <Link to="/pricing" onClick={toggleMenu}>
+              <Link to="/payments" onClick={toggleMenu}>
                 <div
                   style={{
                     display: "flex",

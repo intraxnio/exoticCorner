@@ -114,12 +114,6 @@ font-family: 'Roboto', sans-serif; */
   width: 12rem;
 }
 
-.imageBox {
-
-  padding-left: '220px',
-  
-}
-
 .login-btn-grad:hover {
   background-position: right center;
   /* change the direction of the change here */
@@ -160,6 +154,8 @@ font-family: 'Roboto', sans-serif; */
   color: white;
 }
 
+
+
 .navbar-toggler {
   position: relative;
   z-index: 1100; /* Ensure it's above other content */
@@ -190,7 +186,7 @@ font-family: 'Roboto', sans-serif; */
 }
 
 .menu.active {
-  transform: translateX(33%); /* Show the menu by translating it into view */
+  transform: translateX(35%); /* Show the menu by translating it into view */
 }
 
 .menu ul {
@@ -216,18 +212,31 @@ font-family: 'Roboto', sans-serif; */
 }
 
 
-
-
-
-
 /* Desktop Size*/
+
+.signup-btn-grad-desk-menu {
+ 
+  justify-content: center;
+  align-items: center;
+  transition: 0.5s;
+  background-size: 200% auto;
+  color:  #11009E;
+  display: flex;
+  width: 8rem;
+  text-decoration: none;
+  height: 50px;
+  font-weight: 500;
+  border : 0.3px solid #11009E;
+  /* background-color: #11009E; */
+
+
+}
 
 @media (min-width: 576px) {
 
-    /* Hide mobile menu on screens larger than or equal to 768px */
-    .mobile-menu {
-        display: none;
-    }
+  .mobile-menu {
+    display: none;
+}
 
   .reviews-text{
 
@@ -237,15 +246,15 @@ font-family: 'Roboto', sans-serif; */
   }
 
 
-.faq-text {
+  .faq-text {
 
-  font-family: "Poppins";
-  font-size: 2.5rem;
-  padding-left: 3.5rem;
-  padding-right: 3.5rem;
-  font-weight: 500;
-
-}
+    font-family: "Poppins";
+    font-size: 2.5rem;
+    padding-left: 3.5rem;
+    padding-right: 3.5rem;
+    font-weight: 500;
+  
+  }
 
 
   .img-1 {
@@ -429,26 +438,25 @@ font-family: 'Roboto', sans-serif; */
 
   .signup-btn-grad-2 {
     background-image: linear-gradient(
-        to right,
-        #8c8c8c 0%,
-        #cac6ef 51%,
-        #ece6ff 100%
-      );
+      to right,
+      #6319f8 0%,
+      #7752FE 51%,
+      #7752FE 100%
+    );
     justify-content: center;
     align-items: center;
     transition: 0.5s;
     background-size: 200% auto;
     color: white;
+    box-shadow: 0 0 20px #eee;
     display: flex;
-    width: 100%;
+    max-width: 50%;
     text-decoration: none;
-    height: 50px;
+    margin-top: 20px;
     font-weight: 500;
-    background-color: #11009E;
-  
+
   
   }
-
   .subtext{
     font-size: 16px;
     justify-content: center;
@@ -587,45 +595,43 @@ font-family: 'Roboto', sans-serif; */
   padding-left: 32px;
 }
 
-
-
 /* Mobile Device*/
 @media (max-width: 576px) {
 
   .desktop-menu {
     display: none;
 }
-
-
-
-  .signup-btn-grad-side-menu {
-      background-image: linear-gradient(
-          to right,
-          #6319f8 0%,
-          #11009E 51%,
-          #7752FE 100%
-        );
-      justify-content: center;
-      align-items: center;
-      transition: 0.5s;
-      background-size: 200% auto;
-      color: white;
-      display: flex;
-      width: 60%;
-      text-decoration: none;
-      height: 45px;
-      font-weight: 500;
-      background-color: #11009E;
-    
   
-  }
+  .signup-btn-grad-side-menu {
+    background-image: linear-gradient(
+        to right,
+        #6319f8 0%,
+        #11009E 51%,
+        #7752FE 100%
+      );
+    justify-content: center;
+    align-items: center;
+    transition: 0.5s;
+    background-size: 200% auto;
+    color: white;
+    display: flex;
+    width: 60%;
+    text-decoration: none;
+    height: 45px;
+    font-weight: 500;
+    background-color: #11009E;
+  
 
- .reviews-text{
+}
+
+  .reviews-text{
 
     font-size: 22px;
     font-family: "Poppins";
   
   }
+
+  
   .faq-text {
 
     font-family: "Poppins";
@@ -643,6 +649,7 @@ font-family: 'Roboto', sans-serif; */
   .card-headings-content {
     font-size: 14px;
     font-weight: 500;
+    margin-bottom: 6px;
     
   }
 
@@ -950,14 +957,6 @@ font-family: 'Roboto', sans-serif; */
 
 }
 
-.thumbnail {
-  border: none; /* No border by default */
-}
-
-.thumbnail.active {
-  border: 1px solid #31304D; /* Change this to whatever style you prefer */
-}
-
 .span-49 {
   color: red;
   font-weight: 700;
@@ -977,24 +976,7 @@ font-family: 'Roboto', sans-serif; */
   position: relative;
   text-decoration: none;
   font-weight: 500;
-  color: #D80032;
-
-}
-
-.signup-btn-grad-desk-menu {
- 
-  justify-content: center;
-  align-items: center;
-  transition: 0.5s;
-  background-size: 200% auto;
-  color:  #31304D;
-  display: flex;
-  width: 8rem;
-  text-decoration: none;
-  height: 50px;
-  font-weight: 500;
-  border : 0.3px solid #31304D;
-  /* background-color: #11009E; */
+  color: #597E52;
 
 
 }
@@ -1024,9 +1006,9 @@ font-family: 'Roboto', sans-serif; */
 .signup-btn-grad-2 {
   background-image: linear-gradient(
       to right,
-      #8c8c8c 0%,
-      #cac6ef 51%,
-      #ece6ff 100%
+      #6319f8 0%,
+      #11009E 51%,
+      #7752FE 100%
     );
   justify-content: center;
   align-items: center;
@@ -1042,25 +1024,6 @@ font-family: 'Roboto', sans-serif; */
 
 
 }
-
-.add-to-cart-btn {
-
-  justify-content: center;
-  align-items: center;
-  transition: 0.5s;
-  background-size: 200% auto;
-  color: white;
-  display: flex;
-  width: 100%;
-  text-decoration: none;
-  height: 50px;
-  font-weight: 500;
-  background-color: #31304D;
-  border-radius: 4px;
-
-}
-
-
 
 
 
@@ -1285,9 +1248,9 @@ font-family: 'Roboto', sans-serif; */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f09433', endColorstr='#bc1888',GradientType=1 );
   color: white; */
 
-  background: #31304D;  /* fallback for old browsers */
-  background: -webkit-linear-gradient(to bottom, #31304D, #31304D);  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to bottom, #31304D, #31304D); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: #121481;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to bottom, #121481, #121481);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to bottom, #11009E, #11009E); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   
 }
 
@@ -1314,7 +1277,7 @@ font-family: 'Roboto', sans-serif; */
     color: var(--bs-accordion-color);
     background-color: var(--bs-accordion-bg);
     align-items: center;
-    /* max-width: 50%; */
+    max-width: 50%;
   }
 }
 

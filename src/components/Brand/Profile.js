@@ -39,7 +39,7 @@ export default function ProfileSettings() {
   const [originalPassword, setOriginalPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [passwordDialogue, setPasswordDialogue] = useState(false);
-  const baseUrl = "http://localhost:8000/api";
+  // const baseUrl = "http://localhost:8000/api";
 
 
 
@@ -58,7 +58,7 @@ export default function ProfileSettings() {
 
 const fetchProfile = useCallback(async () => {
   try {
-    axios.post(baseUrl + "/brand/settings-brand-details", {
+    axios.post("/api/brand/settings-brand-details", {
       userId: user.brand_id,
     }).then( ress => {
       setBrandName(ress.data.brandDetails.brand_name);
@@ -69,6 +69,7 @@ const fetchProfile = useCallback(async () => {
       setBankAccount(ress.data.brandDetails.bank_account);
       setIfscCode(ress.data.brandDetails.ifsc);
       setKycStatus(ress.data.brandDetails.is_approved);
+
       setLoading(false);
     }).catch(e => {
       // Handle error
@@ -109,7 +110,7 @@ useEffect(() => {
     formData.append('image', selectedFile);
   
     try {
-        const response = await axios.post(baseUrl + "/brand/update-brand-logo", formData, {
+        const response = await axios.post("/api/brand/update-brand-logo", formData, {
         withCredentials: true,
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -141,7 +142,7 @@ useEffect(() => {
 
 
 const updateBrandName = () => {
-      axios.post(baseUrl + "/brand/update-brand-name", {
+      axios.post("/api/brand/update-brand-name", {
         brand_id: user.brand_id,
         newBrandName: newName,
       })
@@ -173,7 +174,7 @@ const updateBrandName = () => {
       else {
 
 
-      await axios.post(baseUrl + "/brand/change-password",
+      await axios.post("/api/brand/change-password",
         { userId: user.brand_id, password : originalPassword, newPassword : newPassword },
         {withCredentials: true}
       )
@@ -234,7 +235,7 @@ const updateBrandName = () => {
         (<Avatar alt="Profile Avatar"  style={{height: '80px', width: '80px'}}>Brand</Avatar>)}
         
         <div style={{ marginLeft: '20px' }}>
-          <Typography variant="h6">Upload brand logo</Typography>
+          <Typography variant="h6">Brand logo</Typography>
         </div>
                 
 
@@ -280,9 +281,10 @@ const updateBrandName = () => {
         </div>
                 <hr style={{ color: 'grey', border: 'none', height: '0.6px', backgroundColor: 'grey' }} />
 
-                  {/* 3rd Line: Kyc */}
 
-                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+  {/* 3rd Line: Kyc */}
+
+  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
                 <div style={{ flex: '1' }}>
                     <Typography variant="body2" style={{ fontWeight: 'bold', marginBottom: '12px' }}>
                     KYC Status
@@ -294,6 +296,7 @@ const updateBrandName = () => {
               
         </div>
                 <hr style={{ color: 'grey', border: 'none', height: '0.6px', backgroundColor: 'grey' }} />
+
 
       {/* 3rd Line: Gst */}
 
@@ -423,6 +426,7 @@ const updateBrandName = () => {
 {/* {category dialogue ends} */}
     </Grid>
     </Grid>
+
     </div>
 
     {isLoading && (

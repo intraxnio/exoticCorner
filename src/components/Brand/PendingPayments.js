@@ -12,7 +12,6 @@ function PendingPayments() {
   const [loading, setLoading] = useState(false);
   const [totalCampaigns, setTotalCampaigns] = useState('');
   const user = useSelector((state) => state.brandUser);
-  const baseUrl = "http://localhost:8000/api";
 
 
 
@@ -36,7 +35,7 @@ function PendingPayments() {
       setLoading(true);
       try {
 
-        axios.post(baseUrl + "/brand/get-total-transactions-pending", {
+        axios.post("/api/brand/get-total-transactions-pending", {
           userId: user.brand_id,
         }).then(ress=>{
     

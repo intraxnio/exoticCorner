@@ -1,9 +1,5 @@
 // import logo from './logo.svg';
 import './styles/Home.module.css';
-/* App.css */
-
-// import './styles/bootstrap.css'
-// import './styles/bootstrap.bundle.min.js'
 import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 // import HomePage from './components/HomePage'
 
@@ -25,15 +21,12 @@ import PrivacyPolicy from './components/LandingPage/PrivacyPolicy';
 import CancellationRefund from './components/LandingPage/CancellationRefund';
 import ShippingPolicy from './components/LandingPage/ShippingPolicy';
 import ContactUs from './components/LandingPage/ContactUs';
+import ForgotPassword from './components/Brand/ForgotPassword';
 import Pricing from './components/LandingPage/Pricing';
 import SupportPage from './components/LandingPage/Support';
-import ForgotPassword from './components/Brand/ForgotPassword';
-import AllSneakers from './components/LandingPage/AllSneakers';
-import Payouts from './components/Brand/Payouts';
-import AddBeneficiary from './components/Brand/AddBeneficiary';
-import AllWatches from './components/LandingPage/AllWatches';
-import AllBags from './components/LandingPage/AllBags';
-import IndividualItem from './components/LandingPage/IndividualItem';
+import Invoicing from './components/LandingPage/Invoicing';
+import Payments from './components/LandingPage/Payments';
+import Onboarding from './components/LandingPage/Onboarding';
 
 
 
@@ -61,14 +54,10 @@ function App() {
           <Route path="/pricing" element={<Pricing/>}/>
           <Route path="/forgotPassword" element={<ForgotPassword/>}/>
           <Route path="/support" element={<SupportPage/>}/>
-          <Route path="/all-bags" element={<AllBags/>}/>
-          <Route path="/all-watches" element={<AllWatches/>}/>
-          <Route path="/all-sneakers" element={<AllSneakers/>}/>
-          <Route path="/individual-item" element={<IndividualItem/>}/>
+          <Route path="/invoicing" element={<Invoicing/>}/>
+          <Route path="/payments" element={<Payments/>}/>
+          <Route path="/onboarding" element={<Onboarding/>}/>
 
-
-
-          {/* <Route path="/login/brand" element={<BrandLogin/>}/> */}
 
 
         <Route path="/brand/*" element={<BrandSideNavBar />}>
@@ -77,25 +66,8 @@ function App() {
           <Route path="profileSettings" element={<ProfileSettings/>}/>
           <Route path="invoices" element={<InvoicesComp/>}/>
           <Route path="createInvoice" element={<CreateInvoice/>}/>
-          <Route path="addBeneficiary" element={<AddBeneficiary/>}/>
           <Route path="products" element={<ProductList/>}/>
           <Route path="support" element={<Support/>}/>
-          <Route path="payouts" element={<Payouts/>}/>
-
-
-
-          {/* <Route path="campaign" element={<CreateCampaign/>}/>
-          <Route path="campaigns/details" element={<BrandShowCampaignDetails/>}/>
-          <Route path="dashboard" element={<BrandMainScreen />} />
-          <Route path="campaigns" element={<CampaignCard />} />
-          <Route path="campaign/requests" element={<ReceivedRequestsTable/>}/>
-          <Route path="campaign/metrics" element={<CampaignCompletedMetrics/>}/>
-          <Route path="campaignMetrics" element={<CampaignMetrics/>}/>
-          <Route path="planDetails" element={<PlanPrices/>}/>
-          <Route path="profileSettings" element={<ProfileSettings/>}/>
-          <Route path="billing/plans" element={<BillingAndPlans/>}/>
-          <Route path="transactions" element={<TransactionHistory/>}/>
-          <Route path="support" element={<SupportPage/>}/> */}
 
         </Route>
         

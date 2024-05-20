@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { Box, TextField, Button, Typography, Link, Grid, Rating, Avatar, Stack, ClickAwayListener, Dialog, DialogTitle, DialogContent, DialogActions} from "@mui/material";
+import { Box, TextField, Button, Typography, Grid, ClickAwayListener, Dialog, DialogTitle, DialogContent, DialogActions} from "@mui/material";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -18,7 +18,7 @@ function ForgotPassword() {
   const [loading, setLoading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogForPassword, setDialogForPassword] = useState(false);
-  const baseUrl = "http://localhost:8000/api";
+//   const baseUrl = "http://localhost:8000/api";
 
 
 
@@ -50,7 +50,7 @@ function ForgotPassword() {
       else {
 
 
-      await axios.post(baseUrl + "/brand/check-email-exists-sendMail",
+      await axios.post("/api/brand/check-email-exists-sendMail",
         { email: email.toLowerCase() },
         {withCredentials: true}
       )
@@ -104,7 +104,7 @@ function ForgotPassword() {
       else {
 
 
-      await axios.post(baseUrl + "/brand/check-resetPin-withDb",
+      await axios.post("/api/brand/check-resetPin-withDb",
         { email: email.toLowerCase(), pin : emailCode },
         {withCredentials: true}
       )
@@ -168,7 +168,7 @@ function ForgotPassword() {
       else {
 
 
-      await axios.post(baseUrl + "/brand/update-password",
+      await axios.post("/api/brand/update-password",
         { email: email.toLowerCase(), password : password },
         {withCredentials: true}
       )

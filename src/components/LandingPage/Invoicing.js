@@ -7,7 +7,7 @@ import ImportContactsIcon from '@mui/icons-material/ImportContacts';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import image1 from '../../images/invoicing-1.svg';
-import chase from '../../images/mainBanner.webp';
+import chase from '../../images/chase.svg';
 
 
 
@@ -25,7 +25,7 @@ export default function Invoicing() {
        <div className="container mx-auto row">
         <div className="container col-md-8 col-lg-8">
           <div className="row txt-1 megaRes">
-            #invoicing
+            #chase
           </div>
 
           <h1 className="row txt-2 mt-1 me-2" >
@@ -112,7 +112,7 @@ export default function Invoicing() {
 <div style={{ display : 'flex', flexDirection : 'column', alignItems : 'center', background : '#F0EBE3'}}>
 
 <Typography sx={{ fontSize : '30px', fontWeight : 500, paddingTop : 5, paddingX : 2, alignItems : 'center', textAlign : 'center', display : 'flex', flexWrap : 'wrap' }}>Get paid faster</Typography>
-<Typography sx={{ fontSize : '18px', fontWeight : 400, paddingTop : 5, paddingX : 2, alignItems : 'center', textAlign : 'center', display : 'flex', flexWrap : 'wrap' }}>
+<Typography sx={{ fontSize : '18px', fontWeight : 400, paddingTop : 1, paddingX : 2, alignItems : 'center', textAlign : 'center', display : 'flex', flexWrap : 'wrap' }}>
     Reliable, timely payments means better cash flow.
 </Typography>
 

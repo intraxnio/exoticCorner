@@ -15,7 +15,7 @@ function BodyCards() {
   return (
     <>
     
-   <Grid container  marginTop={8} marginBottom={5} paddingX={1}>
+   <Grid container marginTop={8} marginBottom={5} paddingX={1}>
 
     <Grid xs={12} md={4} lg={4} bgcolor={'#DFCCFB'}  paddingX={3} paddingY={3}>
 

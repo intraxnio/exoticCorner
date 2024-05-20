@@ -16,18 +16,14 @@ const BrandTemp_Schema = new Schema({
         required: true
     },
 
-    contact_num:{
-        type: String
-
-    },
-    
     reset_pin:{
         type: Number
 
     },
 
-    instagram_handle: {
-        type: String,
+    contact_num:{
+        type: String
+
     },
 
     brand_name: {

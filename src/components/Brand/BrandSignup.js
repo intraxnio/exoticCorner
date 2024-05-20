@@ -47,9 +47,7 @@ function BrandSignup() {
   const [businessMobile, setBusinessMobile] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-
-
-  const baseUrl = "http://localhost:8000/api";
+  // const baseUrl = "http://localhost:8000/api";
   
 
 
@@ -95,11 +93,11 @@ function BrandSignup() {
       setIsLoading(true);
 
       try {
-          const response = await axios.post(baseUrl + "/brand/signup-brand", {
+          const response = await axios.post("/api/brand/signup-brand", {
           email: email,
           password: password,
           brand: brand,
-          contact : businessMobile
+          contact: businessMobile,
         });
     
         if (response.data.success) {
@@ -144,7 +142,7 @@ function BrandSignup() {
       else {
 
 
-      await axios.post(baseUrl + "/brand/check-resetPin-withDb-brandTemps",
+      await axios.post("/api/brand/check-resetPin-withDb-brandTemps",
         { email: email.toLowerCase(), pin : emailCode },
         {withCredentials: true}
       )
@@ -164,7 +162,7 @@ function BrandSignup() {
                 toast.success("Account created successfully. Please login to continue...");
 
                 setTimeout(() => {
-                  navigate("/");
+                  navigate("/login/brand");
                 }, 2000);
                   }
 
@@ -188,7 +186,6 @@ function BrandSignup() {
 
     
   };
-
 
   const handleChange = (e) => {
     const inputValue = e.target.value;
@@ -233,7 +230,7 @@ function BrandSignup() {
       margin='auto'
       marginTop={12}
       >
-        <Typography variant='h5' textAlign='center' sx={{ marginBottom : '22px'}}>Brand Signup</Typography>
+        <Typography variant='h5' textAlign='center' sx={{ marginBottom : '22px'}}>Merchant Signup</Typography>
 
         <TextField type='email' id='email' sx={{ marginBottom : '12px'}} onChange={(e)=>{setEmail(e.target.value)}} variant='outlined' label='Email'></TextField>
         <TextField type='password' id="password"  sx={{ marginBottom : '12px'}} onChange={(e)=>{setPassword(e.target.value)}} variant='outlined' label='Create a Password'></TextField>
@@ -248,6 +245,7 @@ function BrandSignup() {
                          inputProps={{ inputMode: 'numeric', maxLength: 10 }}
                       ></TextField>
                       {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+                      
         <Button type='submit' onClick={submit} variant='contained' 
                 sx={{
                       marginTop:3,
@@ -331,7 +329,7 @@ function BrandSignup() {
                 sx={{ paddingX : '20px'}} 
                 name="half-rating-read" defaultValue={4.5} precision={0.5} readOnly />
 
-                <Typography textAlign="start"  sx={{fontSize: '14px', color: 'white', paddingX: '20px', paddingTop: '2%'}}>
+<Typography textAlign="start"  sx={{fontSize: '14px', color: 'white', paddingX: '20px', paddingTop: '2%'}}>
                 "It's a game-changing invoicing tool that streamlines payment collection like never before, 
                 offering solutions that many small business owners didn't even realize they needed until now."
                 </Typography>
@@ -349,7 +347,7 @@ function BrandSignup() {
                 display ='flex'
                 flexDirection={'column'}
                 >
-                <Typography textAlign="start"  sx={{fontSize: '14px', color: 'white' }}>
+                <Typography textAlign="start"  sx={{fontSize: '14px', color: 'white'}}>
                 Karan Jaiswal <br />
                 </Typography>
 
@@ -389,7 +387,7 @@ function BrandSignup() {
       margin='auto'
       marginTop={12}
       >
-        <Typography variant='h5' textAlign='center' sx={{ marginBottom : '22px'}}>Brand Signup</Typography>
+        <Typography variant='h5' textAlign='center' sx={{ marginBottom : '22px'}}>Merchant Signup</Typography>
 
         <TextField type='email' id='email' sx={{ marginBottom : '12px'}} onChange={(e)=>{setEmail(e.target.value)}} variant='outlined' label='Email'></TextField>
         <TextField type='password' id="password"  sx={{ marginBottom : '12px'}} onChange={(e)=>{setPassword(e.target.value)}} variant='outlined' label='Create a Password'></TextField>
@@ -404,7 +402,6 @@ function BrandSignup() {
                          inputProps={{ inputMode: 'numeric', maxLength: 10 }}
                       ></TextField>
                       {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-
         <Button type='submit' onClick={submit} variant='contained' 
                 sx={{
                       marginTop:3,

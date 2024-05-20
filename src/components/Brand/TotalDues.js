@@ -13,7 +13,7 @@ function TotalDues() {
   const [loading, setLoading] = useState(false);
   const [totalAmount, setTotalAmount] = useState('');
   const user = useSelector((state) => state.brandUser);
-  const baseUrl = "http://localhost:8000/api";
+//   const baseUrl = "http://localhost:8000/api";
 
 
 
@@ -40,7 +40,7 @@ function TotalDues() {
       setLoading(true);
       try {
 
-        axios.post(baseUrl + "/brand/get-total-transactions-amount-dues", {
+        axios.post("/api/brand/get-total-transactions-amount-dues", {
           userId: user.brand_id,
         }).then(ress=>{
     

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef} from 'react'
+import React from 'react'
 import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -10,16 +10,12 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom';
-import Avatar from '@mui/material/Avatar';
 import { deepOrange, blue, indigo, green, purple } from '@mui/material/colors';
 import { Outlet} from "react-router-dom";
 import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import LanguageIcon from '@mui/icons-material/Language';
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import CodeIcon from '@mui/icons-material/Code';
 import PersonIcon from '@mui/icons-material/Person';
 import InsertLinkIcon from '@mui/icons-material/InsertLink';
@@ -124,22 +120,6 @@ const ResponsiveDrawer = (props) => {
           </Link>
         </ListItem>
 
-        <ListItem key="Payouts" disablePadding style={{ marginBottom : '4px'}}>
-          <Link
-            style={{ textDecoration: "none", color: "black" }}
-            to="/brand/payouts"
-            onClick={handleDrawerToggle}
-
-          >
-            <ListItemButton>
-              <ListItemIcon>
-                <AccountBalanceIcon sx={{ color: blue[500] }}/>
-              </ListItemIcon>
-              <ListItemText primary="Payouts" />
-            </ListItemButton>
-          </Link>
-        </ListItem>
-
 
         <ListItem key="Products" disablePadding style={{ marginBottom : '4px'}}>
           <Link
@@ -219,10 +199,7 @@ const ResponsiveDrawer = (props) => {
             bottom: 0, // Position at the bottom
           }}
         >
-          
          <Toolbar sx={{ display: 'flex', justifyContent: 'center' }}>
-
-     
           
       <IconButton
         aria-label="open drawer"

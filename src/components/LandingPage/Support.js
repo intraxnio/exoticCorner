@@ -1,14 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Grid, Card, CardContent, CardActions, Divider, List, ListItem, Typography, Button } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
-import CallIcon from '@mui/icons-material/Call';
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { Link } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
-
 
 
 
@@ -17,12 +12,12 @@ import Footer from './Footer';
 export default function SupportPage() {
 
 
-
   return (
     <>
-       <Navbar />
 
-    <Grid container justifyContent="center" spacing={4} sx={{paddingX: '12px', marginBottom : '26px', marginTop : '26px'}}>
+    <Navbar />
+
+    <Grid container justifyContent="center" spacing={4} sx={{ paddingX : '12px', marginBottom: 7, marginTop : 5}}>
       <Grid item xs={12} sm={6} md={4}>
         <Card variant="outlined">
           <CardContent>
@@ -43,7 +38,7 @@ export default function SupportPage() {
               </ListItem>
               <ListItem>
                 <CheckIcon color="primary" />
-                &nbsp;&nbsp; Catalogue Setup
+                &nbsp;&nbsp; Inventory Setup
               </ListItem>
               <ListItem>
                 <CheckIcon color="primary" />
@@ -68,17 +63,18 @@ export default function SupportPage() {
               startIcon={<MailOutlineIcon />}
               style={{marginLeft: '16px', textTransform: 'lowercase'}}
             >
-              support@billsbook.online
+              support@billsbook.cloud
             </Button>
           </CardActions>
         </Card>
       </Grid>
       
 
-     
+    
     </Grid>
 
     <Footer />
+
     </>
   );
 }

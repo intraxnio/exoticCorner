@@ -1,6 +1,6 @@
 import React, { useState, useEffect} from 'react'
 import axios from 'axios';
-import { Box, Typography, Stack } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { useSelector } from "react-redux";
 import CircularProgress from '@mui/material/CircularProgress';
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
@@ -13,7 +13,6 @@ function TotalTransactionAmount() {
   const [loading, setLoading] = useState(false);
   const [totalAmount, setTotalAmount] = useState('');
   const user = useSelector((state) => state.brandUser);
-  const baseUrl = "http://localhost:8000/api";
 
 
 
@@ -40,7 +39,7 @@ function TotalTransactionAmount() {
       setLoading(true);
       try {
 
-        axios.post(baseUrl + "/brand/get-total-transactions-amount", {
+        axios.post("/api/brand/get-total-transactions-amount", {
           userId: user.brand_id,
         }).then(ress=>{
     
